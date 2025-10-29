@@ -3,8 +3,11 @@
 #include<string.h>
 
 typedef struct{
-     char cadastrar_Pedido[50];
-     char pedidos_aceito[50];
+     char numero_pedido[50];
+     char nome_cliente[100];
+     char produto_pedido[100];
+    
+     
 } cadastro;
 
 int main(){
@@ -15,9 +18,17 @@ int main(){
     fp = fopen("pedido.csv", "a+");
 
     printf("Digite o Pedido que deseja cadastrar:");
-    gets(c.cadastrar_Pedido, 50, stdin);
+    gets(c.numero_pedido, 50, stdin);
 
-    fprintf(fp, "%s\n", c.cadastrar_Pedido);
+    printf("Nome do cliente:");
+    gets(c.nome_cliente, 100, stdin);
+
+    printf("Produto solicitado:");
+    gets(c.produto_pedido, 100, stdin);
+
+    fprintf(fp, "%s, %s,  %s\n", c.numero_pedido, c.nome_cliente, c.produto_pedido);
+
+    
 
 
 }
