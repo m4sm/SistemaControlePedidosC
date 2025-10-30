@@ -8,13 +8,15 @@ typedef struct{
      char produto_pedido[100];
 } cadastro;
 
-int main(){
-    cadastro c;
+int cadastrar(FILE *fp, cadastro c){
 
-    FILE *fp;
-
-    fp = fopen("pedido.csv", "a+");
-    
+    fp = fopen("pedido.txt", "a+");
+     
+     if(fp == NULL){
+         printf("Erro ao abrir o arquivo");
+         return 1;
+     }
+     
     rewind(fp);
     char primeira_linha[100];
     if (fgets(primeira_linha, 100, fp) == NULL) {
@@ -35,10 +37,73 @@ int main(){
     
     fprintf(fp, "%s, %s,  %s\n", c.numero_pedido, c.nome_cliente, c.produto_pedido);
 
-    fclose(fp);
+  
     
-    
-    return 0;
 
+    
 }
 
+int consultar(FILE *fp, cadastro c, char numero[50]){
+    int encontrado = 0;
+    fp = fopen("pedido.txt", "r");
+    if(fp == NULL){
+        printf("Erro ao abrir o arquivo");
+        }
+    
+    printf("Digite o número do pedido que deseja consultar:");
+    fgets(numero, 50, stdin);
+    numero[strcspn(numero, "\n")] = '\0';
+    
+    char linha[256];
+    fgets(linha, sizeof(linha), fp);
+    
+    while(fgets(linha, sizeof(linha), fp)){
+        sscanf(linha, " %49[^,],%99[^,],%99[^\n]", c.numero_pedido, c.nome_cliente, c.produto_pedido);
+        if(strcmp(c.numero_pedido, numero) == 0){
+            printf("\nPedido encontrado:\n");
+            printf("Número: %s\nCliente: %s\nProduto: %s\n", c.numero_pedido, c.nome_cliente, c.produto_pedido);
+            encontrado = 1;
+            break;
+        }
+    }
+
+    if(!encontrado){
+        printf("Pedido não encontrado.\n");
+    }
+    fclose(fp);
+}
+
+int main(){
+   int opcao;
+   
+   do{
+       printf("\n====MENU===\n");
+       printf("\n1-CADASTRE SEU PEDIDO\n");
+       printf("2-CONSULTE O PEDIDO\n");
+       printf("3-SAIR\n");
+       scanf("%d", &opcao);
+       getchar();
+       
+       switch(opcao){
+           case 1:
+           cadastrar(fp, c);
+           break;
+           
+           case 2:
+           consultar(fp, c, numero);
+           break;
+           
+           case 3:
+           printf("Pressione enter para sair.");
+           break;
+           
+           default:
+           printf("Nenhum opção selecionada");
+       }
+   }while(opcao!= 3);
+   
+   return 0;
+    
+    
+
+}
