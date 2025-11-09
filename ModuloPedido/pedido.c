@@ -1,16 +1,16 @@
 #include<stdio.h>
 #include<stdlib.h>
 #include<string.h>
+#include "pedido.h"
 
-typedef struct{
-     char numero_pedido[50];
-     char nome_cliente[100];
-     char produto_pedido[100];
-} cadastro;
 
-int cadastrar(FILE *fp, cadastro c){
 
-    fp = fopen("pedido.txt", "a+");
+
+int cadastrar(){
+    FILE *fp;
+    cadastro c;
+    
+    fp = fopen("pedido.csv", "a+");
      
      if(fp == NULL){
          printf("Erro ao abrir o arquivo");
@@ -37,20 +37,20 @@ int cadastrar(FILE *fp, cadastro c){
     
     fprintf(fp, "%s, %s,  %s\n", c.numero_pedido, c.nome_cliente, c.produto_pedido);
 
-  
-    
-
-    
 }
 
-int consultar(FILE *fp, cadastro c, char numero[50]){
+int consultar(){
+    FILE *fp; 
+    cadastro c; 
+    char numero[50];
+    
     int encontrado = 0;
-    fp = fopen("pedido.txt", "r");
+    fp = fopen("pedido.csv", "r");
     if(fp == NULL){
         printf("Erro ao abrir o arquivo");
         }
     
-    printf("Digite o número do pedido que deseja consultar:");
+    printf("Digite o numero do pedido que deseja consultar:");
     fgets(numero, 50, stdin);
     numero[strcspn(numero, "\n")] = '\0';
     
@@ -59,7 +59,7 @@ int consultar(FILE *fp, cadastro c, char numero[50]){
     
     while(fgets(linha, sizeof(linha), fp)){
         sscanf(linha, " %49[^,],%99[^,],%99[^\n]", c.numero_pedido, c.nome_cliente, c.produto_pedido);
-        if(strcmp(c.numero_pedido, numero) == 0){
+        if(strcmp(c.numero_pedido, numero) == 1){
             printf("\nPedido encontrado:\n");
             printf("Número: %s\nCliente: %s\nProduto: %s\n", c.numero_pedido, c.nome_cliente, c.produto_pedido);
             encontrado = 1;
@@ -86,15 +86,14 @@ int main(){
        
        switch(opcao){
            case 1:
-           cadastrar(fp, c);
+           cadastrar();
            break;
            
            case 2:
-           consultar(fp, c, numero);
+           consultar();
            break;
            
            case 3:
-           printf("Pressione enter para sair.");
            break;
            
            default:
@@ -104,6 +103,4 @@ int main(){
    
    return 0;
     
-    
-
 }
