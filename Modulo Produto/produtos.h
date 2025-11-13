@@ -9,10 +9,14 @@ typedef struct {
 } Produto;
 
 // Funções básicas
-void verificarOuCriarArquivo();
+
 void cadastrarProduto();
 void consultarProduto();
 void removerProduto();
 void listarProdutos();
+
+//funções gerais de manipulação
+void verificarOuCriarArquivo();
+void lerProduto();
 
 #endif
