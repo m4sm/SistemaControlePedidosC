@@ -1,11 +1,12 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "produtos.h"
+#include "produtos.c"
+
 
 int main() {
-    int opcao;
-
-    do {
+   
+    /* do {
         printf("\n=== Sistema de Produtos ===\n");
         printf("1. Cadastrar Produto\n");
         printf("2. Consultar Produto\n");
@@ -15,6 +16,7 @@ int main() {
         printf("Escolha uma opcao: ");
         scanf("%d", &opcao);
 
+
         switch (opcao) {
             case 1: cadastrarProduto(); break;
             case 2: consultarProduto(); break;
@@ -23,7 +25,22 @@ int main() {
             case 0: printf("Saindo...\n"); break;
             default: printf("Opcao invalida!\n");
         }
-    } while (opcao != 0);
+    } while (opcao != 0);*/
 
-    return 0;
+    // Area de testes ------------------------------
+    Produto p;
+
+    do {
+        
+        cadastrarProduto("listadeprodutos.csv");  
+        
+    } while (desejaContinuar());
+
+    consultarProduto("listadeprodutos.csv");
+
+    removerProduto("listadeprodutos.csv");
+
+
+    // Area de testes ------------------------------
+
 }
