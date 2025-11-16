@@ -153,6 +153,9 @@ void cadastrarcliente() {
 
     rewind(fp); 
 
+
+
+
     // Ver se o código existe
     while (fgets(texto, sizeof(texto), fp)) {
         char codigo_existente[30];

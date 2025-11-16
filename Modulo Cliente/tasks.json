@@ -1,0 +1,26 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "Compilar Cliente",
+            "type": "shell",
+            "command": "gcc",
+            "args": [
+                "Modulo Cliente/cliente.c",
+                "Modulo Cliente/cadastrarcliente.c",
+                "Modulo Cliente/consultarcliente.c",
+                "Modulo Cliente/listarcliente.c",
+                "Modulo Cliente/removercliente.c",
+                "Modulo Cliente/validacpf.c",
+                "Modulo Cliente/validacnpj.c",
+                "-o",
+                "Modulo Cliente/output/cliente.exe"
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "problemMatcher": []
+        }
+    ]
+}

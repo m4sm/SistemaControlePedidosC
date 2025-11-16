@@ -21,27 +21,19 @@ typedef struct{
     char celular[30];
     char razao_social[30];
     char nome_contato[50];
-<<<<<<< HEAD
     char opcao1[50]; // nome e celular
     char opcao2[50]; //razao social e nome de contato
-=======
-    char opcao1[50];
-    char opcao2[50];
->>>>>>> 9ad858882efa22b6bf00cc2eae434af8e1e508fe
 
 } pessoa;
 
 int valida_cpf(char cpf[12]);
 int valida_cnpj(char cnpj[15]);
-<<<<<<< HEAD
 void cadastrarcliente();
 int analisacliente(char *cadastro);
 void consultarcliente();
 void removercliente();
 void listarcliente();
-=======
-void consultarcliente();
->>>>>>> 9ad858882efa22b6bf00cc2eae434af8e1e508fe
+void maincliente();
 
 pessoa p;
 FILE *fp;
