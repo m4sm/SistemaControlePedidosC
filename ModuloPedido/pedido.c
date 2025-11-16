@@ -77,7 +77,7 @@ void consultar(){
     
     while(fgets(linha, sizeof(linha), fp)){
         sscanf(linha, " %49[^,],%99[^,],%99[^\n]", c.numero_pedido, c.nome_cliente, c.produto_pedido);
-        if(strcmp(c.numero_pedido, numero) == 1){
+        if(strcmp(c.numero_pedido, numero) == 0){
             printf("\nPedido encontrado:\n");
             printf("Número: %s\nCliente: %s\nProduto: %s\n", c.numero_pedido, c.nome_cliente, c.produto_pedido);
             encontrado = 1;
@@ -113,7 +113,51 @@ void listar(){
 }
 
 void remover(){
+    FILE *fp, *temp_fp; 
+    cadastro c; 
+    char numero[50];
+    int encontrado = 0;
     
+    fp = fopen("pedido.csv", "r");
+    if(fp == NULL){
+        printf("Erro ao abrir o arquivo");
+        return;
+    }
+    
+    temp_fp = fopen("temp_pedido.csv", "w");
+    if(temp_fp == NULL){
+        printf("Erro ao criar o arquivo temporário");
+        fclose(fp);
+        return;
+    }
+    
+    printf("Digite o numero do pedido que deseja remover:");
+    fgets(numero, 50, stdin);
+    numero[strcspn(numero, "\n")] = '\0';
+    
+    char linha[256];
+    fgets(linha, sizeof(linha), fp);
+    fprintf(temp_fp, "%s", linha);
+    
+    while(fgets(linha, sizeof(linha), fp)){
+        sscanf(linha, " %49[^,],%99[^,],%99[^\n]", c.numero_pedido, c.nome_cliente, c.produto_pedido);
+        if(strcmp(c.numero_pedido, numero) == 0){
+            encontrado = 1;
+            printf("Pedido removido com sucesso.\n");
+            continue;
+        }
+        fprintf(temp_fp, "%s", linha);
+    }
+
+    if(!encontrado){
+        printf("Pedido não encontrado.\n");
+    }
+    
+    fclose(fp);
+    fclose(temp_fp);
+    
+    remove("pedido.csv");
+    rename("temp_pedido.csv", "pedido.csv");
 }
 
 int main(){
@@ -124,7 +168,8 @@ int main(){
        printf("\n1-CADASTRE SEU PEDIDO\n");
        printf("2-CONSULTE O PEDIDO\n");
        printf("3-LISTE TODOS OS PEDIDOS\n");
-       printf("4-SAIR\n");
+       printf("4-REMOVER PEDIDO\n");
+       printf("5-SAIR\n");
        printf("Escolha uma opção:\n");
        scanf("%d", &opcao);
        getchar();
@@ -137,18 +182,22 @@ int main(){
            case 2:
            consultar();
            break;
-           
+          
            case 3:
-            listar();
+           listar();
            break;
            
            case 4:
+           remover();
+           break;
+
+           case 5:
            break;
            
            default:
            printf("Nenhum opção selecionada");
        }
-   }while(opcao!= 3);
+   }while(opcao!= 5);
    
    return 0;
     
