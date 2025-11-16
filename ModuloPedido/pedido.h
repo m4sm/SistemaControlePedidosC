@@ -11,8 +11,8 @@ typedef struct {
     char produto_pedido[100];
 } cadastro;
 
-int cadastrar();
-int consultar();
+void cadastrar();
+void consultar();
   
 
 #endif

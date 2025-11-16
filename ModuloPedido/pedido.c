@@ -2,19 +2,19 @@
 #include<stdlib.h>
 #include<string.h>
 #include "pedido.h"
+#include "../Modulo Cliente/cliente.h"
 
-
-
-
-int cadastrar(){
+void cadastrar(){
     FILE *fp;
     cadastro c;
+    int codigo_cadas = 0;
+    
     
     fp = fopen("pedido.csv", "a+");
      
      if(fp == NULL){
          printf("Erro ao abrir o arquivo");
-         return 1;
+        
      }
      
     rewind(fp);
@@ -22,11 +22,29 @@ int cadastrar(){
     if (fgets(primeira_linha, 100, fp) == NULL) {
         fprintf(fp, "ID, CLIENTE, PRODUTO\n");
     };
-    
-    printf("Digite o Pedido que deseja cadastrar:\n");
+        
+    printf("Digite o Indentificador do Pedido que deseja cadastrar:\n");
     fgets(c.numero_pedido, 50, stdin);
     c.numero_pedido[strcspn(c.numero_pedido, "\n")] = '\0';
+        
+    while(fgets(texto, 1000, fp)){
+
+        char codigo_existente[30];
+        sscanf(texto, "%[^,]", codigo_existente);
+
+        if(strcmp(c.numero_pedido, codigo_existente) == 0){
+            codigo_cadas = 1;
+            break;
+        }
+    }
+     if (codigo_cadas) {
+        printf("Este Identificador ja existe. Digite outro. \n");
+        return;
+    } else {
+        printf("Identificador cadastrado com sucesso!\n");
+    }
     
+   
     printf("\nNome do cliente:\n");
     fgets(c.nome_cliente, 100, stdin);
     c.nome_cliente[strcspn(c.nome_cliente, "\n")] = '\0';
@@ -39,7 +57,7 @@ int cadastrar(){
 
 }
 
-int consultar(){
+void consultar(){
     FILE *fp; 
     cadastro c; 
     char numero[50];
@@ -73,6 +91,13 @@ int consultar(){
     fclose(fp);
 }
 
+
+
+
+
+
+
+
 int main(){
    int opcao;
    
@@ -80,7 +105,8 @@ int main(){
        printf("\n====MENU===\n");
        printf("\n1-CADASTRE SEU PEDIDO\n");
        printf("2-CONSULTE O PEDIDO\n");
-       printf("3-SAIR\n");
+       printf("3-LISTE TODOS OS PEDIDOS\n");
+       printf("4-SAIR\n");
        printf("Escolha uma opção:\n");
        scanf("%d", &opcao);
        getchar();
@@ -95,6 +121,10 @@ int main(){
            break;
            
            case 3:
+              //listar();
+           break;
+           
+           case 4:
            break;
            
            default:
