@@ -81,6 +81,7 @@ int main(){
        printf("\n1-CADASTRE SEU PEDIDO\n");
        printf("2-CONSULTE O PEDIDO\n");
        printf("3-SAIR\n");
+       printf("Escolha uma opção:\n");
        scanf("%d", &opcao);
        getchar();
        
