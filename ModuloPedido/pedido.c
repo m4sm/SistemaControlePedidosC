@@ -110,12 +110,11 @@ void listar(){
     }
 
     fclose(fp);
-
 }
 
-
-
-
+void remover(){
+    
+}
 
 int main(){
    int opcao;
