@@ -37,7 +37,7 @@ void cadastrar(){
             break;
         }
     }
-     if (codigo_cadas) {
+     if(codigo_cadas) {
         printf("Este Identificador ja existe. Digite outro. \n");
         return;
     } else {
@@ -90,9 +90,28 @@ void consultar(){
     }
     fclose(fp);
 }
+ 
+void listar(){
+    FILE *fp; 
+    cadastro c; 
+    
+    fp = fopen("pedido.csv", "r");
+    if(fp == NULL){
+        printf("Erro ao abrir o arquivo");
+        }
+    
+    char linha[256];
+    fgets(linha, sizeof(linha), fp);
+    printf("%s", linha);
+    
+    while(fgets(linha, sizeof(linha), fp)){
+        sscanf(linha, " %49[^,],%99[^,],%99[^\n]", c.numero_pedido, c.nome_cliente, c.produto_pedido);
+        printf("Número: %s | Cliente: %s | Produto: %s\n", c.numero_pedido, c.nome_cliente, c.produto_pedido);
+    }
 
+    fclose(fp);
 
-
+}
 
 
 
@@ -121,7 +140,7 @@ int main(){
            break;
            
            case 3:
-              //listar();
+            listar();
            break;
            
            case 4:
