@@ -3,8 +3,9 @@
 #include<string.h>
 #include "pedido.h"
 #include "../Modulo Cliente/cliente.h"
+#include "../Modulo Produto/produtos.h"
 
-void cadastrar(){
+void cadastrarPedido(){
     FILE *fp;
     cadastro c;
     int codigo_cadas = 0;
@@ -57,7 +58,7 @@ void cadastrar(){
 
 }
 
-void consultar(){
+void consultarPedido(){
     FILE *fp; 
     cadastro c; 
     char numero[50];
@@ -91,7 +92,7 @@ void consultar(){
     fclose(fp);
 }
  
-void listar(){
+void listarPedido(){
     FILE *fp; 
     cadastro c; 
     
@@ -112,7 +113,7 @@ void listar(){
     fclose(fp);
 }
 
-void remover(){
+void removerPedido(){
     FILE *fp, *temp_fp; 
     cadastro c; 
     char numero[50];
@@ -164,31 +165,31 @@ int main(){
    int opcao;
    
    do{
-       printf("\n====MENU===\n");
-       printf("\n1-CADASTRE SEU PEDIDO\n");
-       printf("2-CONSULTE O PEDIDO\n");
-       printf("3-LISTE TODOS OS PEDIDOS\n");
-       printf("4-REMOVER PEDIDO\n");
-       printf("5-SAIR\n");
+       printf("\n=============MENU==============\n");
+       printf("\n============1-CADASTRE SEU PEDIDO===========\n");
+       printf("=============2-CONSULTE O PEDIDO===============\n");
+       printf("=============3-LISTE TODOS OS PEDIDOS===========\n");
+       printf("=================4-REMOVER PEDIDO==============\n");
+       printf("====================5-SAIR================\n");
        printf("Escolha uma opção:\n");
        scanf("%d", &opcao);
        getchar();
        
        switch(opcao){
            case 1:
-           cadastrar();
+           cadastrarPedido();
            break;
            
            case 2:
-           consultar();
+           consultarPedido();
            break;
           
            case 3:
-           listar();
+           listarPedido();
            break;
            
            case 4:
-           remover();
+           removerPedido();
            break;
 
            case 5:
