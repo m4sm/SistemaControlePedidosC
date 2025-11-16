@@ -48,9 +48,3 @@ void consultarcliente(){
     fclose(fp);
 }
 
-int main(){
-
-    consultarcliente();
-
-    return 0;
-}

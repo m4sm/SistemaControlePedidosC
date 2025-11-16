@@ -37,6 +37,3 @@ void listarcliente(){
     fclose(fp);
 }
 
-int main(){
-    listarcliente();
-}
