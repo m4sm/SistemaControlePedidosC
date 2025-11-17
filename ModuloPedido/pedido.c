@@ -91,13 +91,6 @@ void consultar(){
     fclose(fp);
 }
 
-
-
-
-
-
-
-
 int main(){
    int opcao;
    
