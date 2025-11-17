@@ -13,6 +13,7 @@ typedef struct {
 
 void cadastrar();
 void consultar();
-  
+void listar();
+void remover();
 
 #endif

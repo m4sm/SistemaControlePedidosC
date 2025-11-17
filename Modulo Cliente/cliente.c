@@ -1,3 +1,4 @@
+
 #include "cliente.h"
 
 int valida_cpf(char cpf[12]){
@@ -458,7 +459,6 @@ void maincliente(){
 
 int main(){
     maincliente();
-
     return 0;
-
 }
+

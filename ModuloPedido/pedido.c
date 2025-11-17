@@ -3,8 +3,9 @@
 #include<string.h>
 #include "pedido.h"
 #include "../Modulo Cliente/cliente.h"
+#include "../Modulo Produto/produtos.h"
 
-void cadastrar(){
+void cadastrarPedido(){
     FILE *fp;
     cadastro c;
     int codigo_cadas = 0;
@@ -37,7 +38,7 @@ void cadastrar(){
             break;
         }
     }
-     if (codigo_cadas) {
+     if(codigo_cadas) {
         printf("Este Identificador ja existe. Digite outro. \n");
         return;
     } else {
@@ -57,7 +58,7 @@ void cadastrar(){
 
 }
 
-void consultar(){
+void consultarPedido(){
     FILE *fp; 
     cadastro c; 
     char numero[50];
@@ -77,7 +78,7 @@ void consultar(){
     
     while(fgets(linha, sizeof(linha), fp)){
         sscanf(linha, " %49[^,],%99[^,],%99[^\n]", c.numero_pedido, c.nome_cliente, c.produto_pedido);
-        if(strcmp(c.numero_pedido, numero) == 1){
+        if(strcmp(c.numero_pedido, numero) == 0){
             printf("\nPedido encontrado:\n");
             printf("Número: %s\nCliente: %s\nProduto: %s\n", c.numero_pedido, c.nome_cliente, c.produto_pedido);
             encontrado = 1;
@@ -90,40 +91,63 @@ void consultar(){
     }
     fclose(fp);
 }
+ 
+void listarPedido(){
+    FILE *fp; 
+    cadastro c; 
+    
+    fp = fopen("pedido.csv", "r");
+    if(fp == NULL){
+        printf("Erro ao abrir o arquivo");
+        }
+    
+    char linha[256];
+    fgets(linha, sizeof(linha), fp);
+    printf("%s", linha);
+    
+    while(fgets(linha, sizeof(linha), fp)){
+        sscanf(linha, " %49[^,],%99[^,],%99[^\n]", c.numero_pedido, c.nome_cliente, c.produto_pedido);
+        printf("Número: %s | Cliente: %s | Produto: %s\n", c.numero_pedido, c.nome_cliente, c.produto_pedido);
+    }
 
 int main(){
    int opcao;
    
    do{
-       printf("\n====MENU===\n");
-       printf("\n1-CADASTRE SEU PEDIDO\n");
-       printf("2-CONSULTE O PEDIDO\n");
-       printf("3-LISTE TODOS OS PEDIDOS\n");
-       printf("4-SAIR\n");
+       printf("\n=============MENU==============\n");
+       printf("\n============1-CADASTRE SEU PEDIDO===========\n");
+       printf("=============2-CONSULTE O PEDIDO===============\n");
+       printf("=============3-LISTE TODOS OS PEDIDOS===========\n");
+       printf("=================4-REMOVER PEDIDO==============\n");
+       printf("====================5-SAIR================\n");
        printf("Escolha uma opção:\n");
        scanf("%d", &opcao);
        getchar();
        
        switch(opcao){
            case 1:
-           cadastrar();
+           cadastrarPedido();
            break;
            
            case 2:
-           consultar();
+           consultarPedido();
            break;
-           
+          
            case 3:
-              //listar();
+           listarPedido();
            break;
            
            case 4:
+           removerPedido();
+           break;
+
+           case 5:
            break;
            
            default:
            printf("Nenhum opção selecionada");
        }
-   }while(opcao!= 3);
+   }while(opcao!= 5);
    
    return 0;
     
