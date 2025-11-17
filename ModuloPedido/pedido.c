@@ -110,57 +110,6 @@ void listarPedido(){
         printf("Número: %s | Cliente: %s | Produto: %s\n", c.numero_pedido, c.nome_cliente, c.produto_pedido);
     }
 
-    fclose(fp);
-}
-
-void removerPedido(){
-    FILE *fp, *temp_fp; 
-    cadastro c; 
-    char numero[50];
-    int encontrado = 0;
-    
-    fp = fopen("pedido.csv", "r");
-    if(fp == NULL){
-        printf("Erro ao abrir o arquivo");
-        return;
-    }
-    
-    temp_fp = fopen("temp_pedido.csv", "w");
-    if(temp_fp == NULL){
-        printf("Erro ao criar o arquivo temporário");
-        fclose(fp);
-        return;
-    }
-    
-    printf("Digite o numero do pedido que deseja remover:");
-    fgets(numero, 50, stdin);
-    numero[strcspn(numero, "\n")] = '\0';
-    
-    char linha[256];
-    fgets(linha, sizeof(linha), fp);
-    fprintf(temp_fp, "%s", linha);
-    
-    while(fgets(linha, sizeof(linha), fp)){
-        sscanf(linha, " %49[^,],%99[^,],%99[^\n]", c.numero_pedido, c.nome_cliente, c.produto_pedido);
-        if(strcmp(c.numero_pedido, numero) == 0){
-            encontrado = 1;
-            printf("Pedido removido com sucesso.\n");
-            continue;
-        }
-        fprintf(temp_fp, "%s", linha);
-    }
-
-    if(!encontrado){
-        printf("Pedido não encontrado.\n");
-    }
-    
-    fclose(fp);
-    fclose(temp_fp);
-    
-    remove("pedido.csv");
-    rename("temp_pedido.csv", "pedido.csv");
-}
-
 int main(){
    int opcao;
    

@@ -9,10 +9,6 @@ void listarcliente(){
         return;
     }
 
-    /*printf("\n--- LISTAGEM DE CLIENTES CADASTRADOS ---\n\n");
-    printf("CODIGO | CPF/CNPJ     | RUA               | SETOR         | CIDADE        | ESTADO | TELEFONE   | EMAIL        | NOME/RAZAO SOCIAL         | CELULAR/NUMERO DE CONTATO     |\n");
-    printf("-----------------------------------------------------------------------------------------------\n");
-    */
 
    while (fgets(texto, sizeof(texto), fp)) {
             texto[strcspn(texto, "\n")] = 0; // Remove o \n
@@ -41,6 +37,3 @@ void listarcliente(){
     fclose(fp);
 }
 
-int main(){
-    listarcliente();
-}

@@ -74,8 +74,3 @@ void removercliente(){
     rename("temp.csv", "clientes.csv");
 }
 
-int main(){
-    removercliente();
-
-    return 0;
-}
