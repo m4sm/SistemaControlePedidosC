@@ -1,10 +1,10 @@
 #include <stdio.h>
-#include <stdlib.h>
+#include <stdlib.h>    
 #include "produtos.h"
 #include "produtos.c"
 
 
-int main() {
+int main() { //renomear para menuProdutos() quando se integrar na função principal.
     Produto p;
     int opcao;
    
