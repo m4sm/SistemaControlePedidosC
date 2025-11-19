@@ -5,8 +5,10 @@
 
 
 int main() {
+    Produto p;
+    int opcao;
    
-    /* do {
+    do {
         printf("\n=== Sistema de Produtos ===\n");
         printf("1. Cadastrar Produto\n");
         printf("2. Consultar Produto\n");
@@ -15,32 +17,22 @@ int main() {
         printf("0. Sair\n");
         printf("Escolha uma opcao: ");
         scanf("%d", &opcao);
+        getchar();
 
 
         switch (opcao) {
-            case 1: cadastrarProduto(); break;
-            case 2: consultarProduto(); break;
-            case 3: removerProduto(); break;
-            case 4: listarProdutos(); break;
+            case 1: {
+                do {
+                    cadastrarProduto("listadeprodutos.csv");
+                } while (desejaContinuar());
+                break;
+                }
+            case 2: consultarProduto("listadeprodutos.csv"); break;
+            case 3: removerProduto("listadeprodutos.csv"); break;
+            case 4: listarProdutos("listadeprodutos.csv"); break;
             case 0: printf("Saindo...\n"); break;
             default: printf("Opcao invalida!\n");
         }
-    } while (opcao != 0);*/
-
-    // Area de testes ------------------------------
-    Produto p;
-
-    do {
-        
-        cadastrarProduto("listadeprodutos.csv");  
-        
-    } while (desejaContinuar());
-
-    consultarProduto("listadeprodutos.csv");
-
-    removerProduto("listadeprodutos.csv");
-
-
-    // Area de testes ------------------------------
+    } while (opcao != 0);
 
 }
