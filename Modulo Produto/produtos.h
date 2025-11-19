@@ -16,7 +16,6 @@ void removerProduto();
 void listarProdutos();
 
 //funções gerais de manipulação
-void verificarOuCriarArquivo();
 void lerProduto();
 
 #endif
