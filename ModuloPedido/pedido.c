@@ -109,9 +109,10 @@ void listarPedido(){
         sscanf(linha, " %49[^,],%99[^,],%99[^\n]", c.numero_pedido, c.nome_cliente, c.produto_pedido);
         printf("Número: %s | Cliente: %s | Produto: %s\n", c.numero_pedido, c.nome_cliente, c.produto_pedido);
     }
+}
 
-int main(){
-   int opcao;
+void menupedido(){
+    int opcao;
    
    do{
        printf("\n=============MENU==============\n");
@@ -126,29 +127,36 @@ int main(){
        
        switch(opcao){
            case 1:
-           cadastrarPedido();
-           break;
+            cadastrarPedido();
+             break;
            
            case 2:
-           consultarPedido();
-           break;
+            consultarPedido();
+            break;
           
            case 3:
-           listarPedido();
-           break;
+            listarPedido();
+            break;
            
            case 4:
-           removerPedido();
-           break;
+            //removerPedido();
+            break;
 
-           case 5:
-           break;
+           /*case 5:
+                
+           break;*/
            
            default:
            printf("Nenhum opção selecionada");
-       }
-   }while(opcao!= 5);
+           break;
+        }
+   } while(opcao!= 5);
    
+}
+
+int main(){
+   menupedido();
    return 0;
     
 }
+
