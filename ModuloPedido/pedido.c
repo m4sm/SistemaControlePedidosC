@@ -188,12 +188,11 @@ void menupedido(){
             break;
            
            case 4:
-            //removerPedido();
+            removerPedido();
             break;
 
-           /*case 5:
-                
-           break;*/
+           case 5:
+            break;
            
            default:
            printf("Nenhum opção selecionada");
