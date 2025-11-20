@@ -5,6 +5,7 @@
 #include "../Modulo Cliente/cliente.h"
 #include "../Modulo Produto/produtos.h"
 
+
 void cadastrarPedido(){
     FILE *fp;
     cadastro c;
@@ -80,7 +81,7 @@ void consultarPedido(){
         sscanf(linha, " %49[^,],%99[^,],%99[^\n]", c.numero_pedido, c.nome_cliente, c.produto_pedido);
         if(strcmp(c.numero_pedido, numero) == 0){
             printf("\nPedido encontrado:\n");
-            printf("Número: %s\nCliente: %s\nProduto: %s\n", c.numero_pedido, c.nome_cliente, c.produto_pedido);
+            printf("Número:%s\nCliente:%s\nProduto:%s", c.numero_pedido, c.nome_cliente, c.produto_pedido);
             encontrado = 1;
             break;
         }
