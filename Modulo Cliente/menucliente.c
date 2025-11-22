@@ -189,7 +189,21 @@ void cadastrarcliente()
         }
     }
 
-    nc_input(5, 2, "Digite o numero de cadastro do cliente (CPF ou CNPJ): ", p.cadastro, 30);
+    do {
+        nc_input(5, 2, "Digite CPF(11) ou CNPJ(14): ", p.cadastro, 30);
+
+        if (strlen(p.cadastro) != 11 && strlen(p.cadastro) != 14) {
+
+            attron(COLOR_PAIR(4));
+            mvprintw(7, 2, "Tamanho incorreto! Deve ter 11 ou 14 digitos.");
+            attroff(COLOR_PAIR(4));
+
+            getch();
+            move(7, 2);
+            clrtoeol();
+        }
+    } while (strlen(p.cadastro) != 11 && strlen(p.cadastro) != 14);
+
 
     switch(strlen(p.cadastro)){
             
