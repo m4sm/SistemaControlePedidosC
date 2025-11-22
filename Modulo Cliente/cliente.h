@@ -35,10 +35,11 @@ void removercliente();
 void listarcliente();
 void maincliente();
 
-pessoa p;
+pessoa p; 
 FILE *fp;
 char texto[1000];
 char codigo_existente[1000];
 int existe_codigo;
+
 
 #endif
