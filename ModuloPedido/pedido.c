@@ -6,58 +6,61 @@
 #include "../Modulo Produto/produtos.h"
 
 
-void cadastrarPedido(){
-    FILE *fp;
-    cadastro c;
-    int codigo_cadas = 0;
-    
-    
-    fp = fopen("pedido.csv", "a+");
-     
-     if(fp == NULL){
-         printf("Erro ao abrir o arquivo");
-        
-     }
-     
-    rewind(fp);
-    char primeira_linha[100];
-    if (fgets(primeira_linha, 100, fp) == NULL) {
-        fprintf(fp, "ID, CLIENTE, PRODUTO\n");
-    };
-        
-    printf("Digite o Indentificador do Pedido que deseja cadastrar:\n");
-    fgets(c.numero_pedido, 50, stdin);
-    c.numero_pedido[strcspn(c.numero_pedido, "\n")] = '\0';
-        
-    while(fgets(texto, 1000, fp)){
-
-        char codigo_existente[30];
-        sscanf(texto, "%[^,]", codigo_existente);
-
-        if(strcmp(c.numero_pedido, codigo_existente) == 0){
-            codigo_cadas = 1;
-            break;
-        }
-    }
-     if(codigo_cadas) {
-        printf("Este Identificador ja existe. Digite outro. \n");
+void cadastrarPedido() {
+    FILE *fp = fopen("pedido.csv", "a+");
+    if (fp == NULL) {
+        printf("Erro ao abrir pedido.csv\n");
         return;
-    } else {
-        printf("Identificador cadastrado com sucesso!\n");
     }
-    
-   
-    printf("\nNome do cliente:\n");
-    fgets(c.nome_cliente, 100, stdin);
-    c.nome_cliente[strcspn(c.nome_cliente, "\n")] = '\0';
-    
-    printf("\nProduto solicitado:\n");
-    fgets(c.produto_pedido, 100, stdin);
-    c.produto_pedido[strcspn(c.produto_pedido, "\n")] = '\0';
-    
-    fprintf(fp, "%s, %s,  %s\n", c.numero_pedido, c.nome_cliente, c.produto_pedido);
 
+    // Criar cabeçalho se arquivo estiver vazio
+    char teste[5];
+    if (fgets(teste, sizeof(teste), fp) == NULL) {
+        fprintf(fp, "ID;CLIENTE;PRODUTO;PRECO\n");
+    }
+
+    char idPedido[30];
+    char codCliente[30];
+    int codProduto;
+
+    char nomeCliente[100];
+    char nomeProduto[100];
+    float precoProduto;
+
+    printf("ID do pedido: ");
+    fgets(idPedido, sizeof(idPedido), stdin);
+    idPedido[strcspn(idPedido, "\n")] = 0;
+
+    // Cliente
+    printf("Código do cliente: ");
+    scanf("%s", codCliente);
+    getchar();
+
+    if (!buscarCliente(codCliente, nomeCliente)) {
+        printf("Cliente não encontrado. Cancelando.\n");
+        fclose(fp);
+        return;
+    }
+
+    // Produto
+    printf("Código do produto: ");
+    scanf("%d", &codProduto);
+    getchar();
+
+    if (!buscarProduto(codProduto, nomeProduto, &precoProduto)) {
+        printf("Produto não encontrado. Cancelando.\n");
+        fclose(fp);
+        return;
+    }
+
+    fprintf(fp, "%s;%s;%s;%.2f\n",
+        idPedido, nomeCliente, nomeProduto, precoProduto);
+
+    printf("Pedido cadastrado!\n");
+
+    fclose(fp);
 }
+
 
 void consultarPedido(){
     FILE *fp; 
@@ -78,7 +81,7 @@ void consultarPedido(){
     fgets(linha, sizeof(linha), fp);
     
     while(fgets(linha, sizeof(linha), fp)){
-        sscanf(linha, " %49[^,],%99[^,],%99[^\n]", c.numero_pedido, c.nome_cliente, c.produto_pedido);
+        sscanf(linha, " %[^,],%[^,],%[^\n]", c.numero_pedido, c.nome_cliente, c.produto_pedido);
         if(strcmp(c.numero_pedido, numero) == 0){
             printf("\nPedido encontrado:\n");
             printf("Número:%s\nCliente:%s\nProduto:%s", c.numero_pedido, c.nome_cliente, c.produto_pedido);
@@ -107,7 +110,7 @@ void listarPedido(){
     printf("%s", linha);
     
     while(fgets(linha, sizeof(linha), fp)){
-        sscanf(linha, " %49[^,],%99[^,],%99[^\n]", c.numero_pedido, c.nome_cliente, c.produto_pedido);
+        sscanf(linha, " %[^,],%[^,],%[^\n]", c.numero_pedido, c.nome_cliente, c.produto_pedido);
         printf("Número: %s | Cliente: %s | Produto: %s\n", c.numero_pedido, c.nome_cliente, c.produto_pedido);
     }
 }
@@ -141,7 +144,7 @@ void removerPedido(){
     fprintf(temp_fp, "%s", linha);
     
     while(fgets(linha, sizeof(linha), fp)){
-        sscanf(linha, " %49[^,],%99[^,],%99[^\n]", c.numero_pedido, c.nome_cliente, c.produto_pedido);
+        sscanf(linha, " %[^,],%[^,],%[^\n]", c.numero_pedido, c.nome_cliente, c.produto_pedido);
         if(strcmp(c.numero_pedido, numero) == 0){
             encontrado = 1;
             printf("Pedido removido com sucesso.\n");

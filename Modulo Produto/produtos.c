@@ -189,3 +189,5 @@ void listarProdutos(const char *nomeArquivo) {
 
     fclose(fp);
 }
+
+

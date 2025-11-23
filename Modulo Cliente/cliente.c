@@ -422,7 +422,6 @@ void removercliente(){
     rename("temp.csv", "clientes.csv");
 }
 
-
 void maincliente(){
     char resp;
 
