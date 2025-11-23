@@ -429,7 +429,7 @@ pessoa buscaCliente(const char *codigo_c){
     fp_cliente=fopen("clientes.csv", "r");
 
     if(fp == NULL){
-        printf(Erro ao abrir o arquivo.);
+        printf("Erro ao abrir o arquivo.");
     }
 
     pessoa c_busca;
@@ -439,18 +439,16 @@ pessoa buscaCliente(const char *codigo_c){
 
         int cmp= sscanf(linha, "%[^;]; %[^;]; %[^;]; %[^;]; %[^;]; %[^;]; %[^;]; %[^;]; %[^;]; %[^\n]", 
         c_busca.codigo, c_busca.cadastro, c_busca.rua, c_busca.setor, 
-        c_busca.cidade, c_busca.estado, c_buscaa.telefone, c_busca.email, c_busca.opcao1, c_busca.opcao2);
+        c_busca.cidade, c_busca.estado, c_busca.telefone, c_busca.email, c_busca.opcao1, c_busca.opcao2);
          
         if(cmp >= 2 && strcmp(codigo_c, c_busca.codigo)){
             fclose(fp_cliente);
-            return pessoa;
         }
         else{
             printf("Cliente não encontrado.");
-            return;
         }
     }
-    return 1;
+
 }
 
 void maincliente(){
