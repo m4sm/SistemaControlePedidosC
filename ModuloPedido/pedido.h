@@ -7,14 +7,21 @@
 
 typedef struct {
     char numero_pedido[50];
+    char idcliente[50];
+    char idproduto[50];
     char quantidade[50];
-} cadastro;
+    char nome_cliente[50];
+    char nome_produto[50];
+    float preco_produto;
+    float preco_total;
+
+} pedido;
 
 void analisarPedido();
-void cadastrar();
-void consultar();
-void listar();
-void remover();
+void cadastrarPedido();
+void consultarPedido();
+void listarPedido();
+void removerPedido();
 
 
 #endif

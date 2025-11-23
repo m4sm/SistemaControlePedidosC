@@ -190,29 +190,26 @@ void listarProdutos(const char *nomeArquivo) {
     fclose(fp);
 }
 
+int buscarPrdutos(){
+    int codigo_p;
+    FILE *fp;
 
-int buscarProduto(int codigoBuscado, char *nomeProduto, float *precoProduto) {
-    FILE *fp = fopen("produtos.csv", "r");
-    if (!fp) {
-        printf("Erro ao abrir produtos.csv\n");
-        return 0;
+    fp = fopen("listadeprodutos.csv", "r");
+
+    If(fp == NULL){
+        printf("Erro ao abrir o arquivo");
     }
+   
+    Produto p_busca;
 
-    Produto p;
-
-    while (fscanf(fp, "%d,%99[^,],%d,%f\n",
-                  &p.codigo, p.descricao, &p.quantidade, &p.preco) == 4) {
-
-        if (p.codigo == codigoBuscado) {
-            strcpy(nomeProduto, p.descricao);
-            *precoProduto = p.preco;
-            fclose(fp);
-            return 1;
+    while(fscanf(fp, "%d, %[^,], %d, %.2f\n", p.codigo, p.descricao, p.quantidade, p.preco)){
+        if(p_bsuca.codigo == codigoBusca){
+           fclose(fp);
+           return p_busca;
         }
-    }
-
-    fclose(fp);
-    return 0;
+        else{
+            printf("Produto não encontrado.");
+            return;
+        }
+    } 
 }
-
-

@@ -422,35 +422,36 @@ void removercliente(){
     rename("temp.csv", "clientes.csv");
 }
 
-int buscarCliente(const char *codigoBuscado, char *nomeCliente) {
-    FILE *fp = fopen("clientes.csv", "r");
-    if (!fp) {
-        printf("Erro ao abrir clientes.csv\n");
-        return 0;
+int buscaCliente(){
+    FILE *fp;
+    int codigo_c;
+    char linha[1000];
+
+    fp=fopen("clientes.csv", "r");
+
+    if(fp == NULL){
+        printf(Erro ao abrir o arquivo.);
     }
 
-    char linha[500];
-    pessoa p;
+    pessoa c_busca;
 
-    while (fgets(linha, sizeof(linha), fp)) {
+    while(fgest(linha, sizeof(linha), fp)){
         linha[strcspn(linha, "\n")] = 0;
 
-        int campos = sscanf(
-            linha,
-            "%[^;];%[^;];%[^;];%[^;];%[^;];%[^;];%[^;];%[^;];%[^;];%[^\n]",
-            p.codigo, p.cadastro, p.rua, p.setor, p.cidade,
-            p.estado, p.telefone, p.email, p.opcao1, p.opcao2
-        );
-
-        if (campos == 10 && strcmp(p.codigo, codigoBuscado) == 0) {
-            strcpy(nomeCliente, p.cadastro);  
+        int cmp= sscanf(linha, "%[^;];%[^;];%[^;];%[^;];%[^;];%[^;];%[^;];%[^;];%[^;];%[^\n]", 
+        c_busca.codigo, c_busca.cadastro, c_busca.cpf, c_busca.cnpj, c_busca.rua, c_busca.setor, 
+        c_busca.cidade, c_busca.estado, c_buscaa.telefone, c_busca.email, c_busca.nome, c_busca.celular, c_busca.razao_social, 
+        c_busca.nome_ccontato, c_busca.opcao1, c_busca.opcao2);
+         
+        if(cmp >= 2 && strcmp(codigo_c, c_busca.codigo)){
             fclose(fp);
-            return 1;
+            return c_busca;
+        }
+        else{
+            printf("Cliente não encontrado.");
+            return;
         }
     }
-
-    fclose(fp);
-    return 0;
 }
 
 void maincliente(){

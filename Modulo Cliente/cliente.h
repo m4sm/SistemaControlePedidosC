@@ -51,6 +51,7 @@ void cadastrar();
 void consultar();
 void listar();
 void remover();
+int buscaCliente(const char *codigo_c);
 
 #endif
 
