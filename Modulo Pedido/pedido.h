@@ -8,8 +8,8 @@
 typedef struct {
     char numero_pedido[50];
     char idcliente[50];
-    char idproduto[50];
-    char quantidade[50];
+    int idproduto;
+    int quantidade;
     char nome_cliente[50];
     char nome_produto[50];
     float preco_produto;

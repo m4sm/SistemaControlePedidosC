@@ -14,7 +14,7 @@ void cadastrarProduto();
 void consultarProduto();
 void removerProduto();
 void listarProdutos();
-void buscarProdutos(int código_p);
+Produto buscarProdutos(int código_p);
 //funções gerais de manipulação
 void lerProduto();
 

@@ -190,9 +190,9 @@ void listarProdutos(const char *nomeArquivo) {
     fclose(fp);
 }
 
-int buscarPrdutos(){
+Produto buscarPrdutos(){
     int codigo_p;
-    FILE *fp;
+    FILE *fp_produto;
 
     fp = fopen("listadeprodutos.csv", "r");
 
@@ -204,7 +204,7 @@ int buscarPrdutos(){
 
     while(fscanf(fp, "%d, %[^,], %d, %.2f\n", p.codigo, p.descricao, p.quantidade, p.preco)){
         if(p_bsuca.codigo == codigoBusca){
-           fclose(fp);
+           fclose(fp_produto);
            return p_busca;
         }
         else{
