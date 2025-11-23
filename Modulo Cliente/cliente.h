@@ -51,7 +51,6 @@ void cadastrar();
 void consultar();
 void listar();
 void remover();
-int buscarCliente();
 
 #endif
 

@@ -5,69 +5,43 @@
 #include "../Modulo Cliente/cliente.h"
 #include "../Modulo Produto/produtos.h"
 
-void cadastrarPedido() {
-    char idPedido[30];
-    char codCliente[30];
-    char nomeCliente[100];
+void cadastrarPedido(){
+    FILE *fp;
+    cadastro c;
+    int codigo_cadas = 0;
+    pessoa c;
+    Produtos p;
+    
+    fp = fopen("pedido.csv", "a+");
+     
+     if(fp == NULL){
+         printf("Erro ao abrir o arquivo");
+        
+     }
 
-    int codProduto;
-    char nomeProduto[100];
-    float precoProduto;
+    printf("Digite o Indentificador do Pedido que deseja cadastrar:\n");
+    fgets(c.numero_pedido, 50, stdin);
+    c.numero_pedido[strcspn(c.numero_pedido, "\n")] = '\0';
+        
+    while(fgets(texto, 1000, fp)){
 
-    int quantidade;
+        char codigo_existente[30];
+        sscanf(texto, "%[^,]", codigo_existente);
 
-    FILE *fp = fopen("pedido.csv", "a+");
-    if (!fp) {
-        printf("Erro ao abrir pedido.csv\n");
-        return;
+        if(strcmp(c.numero_pedido, codigo_existente) == 0){
+            codigo_cadas = 1;
+            break;
+        }
     }
-
-    // CABEÇALHO
-    fseek(fp, 0, SEEK_END);
-    if (ftell(fp) == 0) {
-        fprintf(fp, "ID;Cliente;Produto;Preco;Quantidade;Total\n");
-    }
-
-    printf("Digite o número do pedido: ");
-    scanf("%s", idPedido);
-
-    printf("Código do cliente: ");
-    scanf("%s", codCliente);
-
-    if (!buscarCliente(codCliente, nomeCliente)) {
-        printf("Cliente não encontrado!\n");
-        fclose(fp);
-        return;
-    }
-
-    printf("Código do produto: ");
-    scanf("%d", &codProduto);
-
-    if (!buscarProduto(codProduto, nomeProduto, &precoProduto)) {
-        printf("Produto não encontrado!\n");
-        fclose(fp);
-        return;
-    }
-
-    printf("Quantidade: ");
-    scanf("%d", &quantidade);
-
-    float total = quantidade * precoProduto;
-
-    fprintf(fp, "%s;%s;%s;%.2f;%d;%.2f\n",
-            idPedido, nomeCliente, nomeProduto, precoProduto, quantidade, total);
-
-    printf("\nPedido cadastrado com sucesso!\n");
-    printf("Cliente: %s\n", nomeCliente);
-    printf("Produto: %s (R$ %.2f)\n", nomeProduto, precoProduto);
-    printf("Total: R$ %.2f\n", total);
-
-    fclose(fp);
+        if(codigo_cadas) {
+        printf("Este Identificador ja existe. Digite outro. \n");
+        }
+        else {
+        printf("Identificador cadastrado com sucesso!\n");
+        }
+        fprintf(fp, "%s, \n", c.numero_pedido);
 }
 
-void analisarCliente(){
-
-}
 
 void consultarPedido(){
     FILE *fp; 
