@@ -1,6 +1,7 @@
 #include "pedido.h"
 #include "../Modulo Cliente/cliente.h"
 #include "../Modulo Produto/produtos.h"
+#include <ncurses.h>
 
 void cadastrarPedido(){
     FILE *fp_pedido;
@@ -14,81 +15,85 @@ void cadastrarPedido(){
     
     fp_pedido = fopen("pedido.csv", "a+");
      
-     if(fp_pedido == NULL){
-         printf("Erro ao abrir o arquivo");
-        
+    if(fp_pedido == NULL){
+        printw("Erro ao abrir o arquivo");
     }
 
-    printf("Digite o Indentificador do Pedido que deseja cadastrar:\n");
-    fgets(c.numero_pedido, 50, stdin);
+    printw("Digite o Indentificador do Pedido que deseja cadastrar:\n");
+    flushinp();
+    getstr(c.numero_pedido);
     c.numero_pedido[strcspn(c.numero_pedido, "\n")] = '\0';
+
+    // VARIÁVEIS USADAS NA VERIFICAÇÃO (VOCÊ NÃO TINHA DECLARADO)
+    char texto[1000];
+    char codigo_existente[30];
         
     while(fgets(texto, 1000, fp_pedido)){
 
-        
-    sscanf(texto, "%[^,]", codigo_existente);
+        sscanf(texto, "%[^,]", codigo_existente);
 
         if(strcmp(c.numero_pedido, codigo_existente) == 0){
             codigo_cadas = 1;
             break;
         }
     }
-        if(codigo_cadas) {
-        printf("Este Identificador ja existe. Digite outro. \n");
-        }
-        else {
-        printf("Identificador cadastrado com sucesso!\n");
-        }
 
-        printf("Digite o código do cliente:");
-        fgets(cliente_t, 30, stdin);
-        cliente_t[strcspn(cliente_t, "\n")] = '\0';
+    if(codigo_cadas) {
+        printw("Este Identificador ja existe. Digite outro.\n");
+    }
+    else {
+        printw("Identificador cadastrado com sucesso!\n");
+    }
+
+    printw("Digite o código do cliente:");
+    flushinp();
+    getstr(cliente_t);
+    cliente_t[strcspn(cliente_t, "\n")] = '\0';
         
-
-        c_encontrado = buscarCliente(cliente_t);
-         if(strcmp(c_encontrado.codigo, "") == 0){
-            printf("Código não encontrado");
-            fclose(fp_pedido);
-            return;
-         }
-         strcpy(c.idcliente, cliente_t);
-         strcpy(c.nome_cliente, c_encontrado.cadastro);
-         printf("Cliente Encontrado: %s\n", c.nome_cliente);
-
-         printf("Digite o Código do produto:");
-         scanf("%d", &produto_t);
-
-        p_encontrado= buscarProdutos(produto_t);
-
-        if(p_encontrado.codigo == -1){ 
-        printf("Código de produto não encontrado. Cadastro cancelado.\n");
+    c_encontrado = buscarCliente(cliente_t);
+    if(strcmp(c_encontrado.codigo, "") == 0){
+        printw("Código não encontrado");
         fclose(fp_pedido);
         return;
-        }
+    }
 
-        c.idproduto = produto_t;
-        strcpy(c.nome_produto, p_encontrado.descricao);
-        c.preco_produto = p_encontrado.preco;
+    strcpy(c.idcliente, cliente_t);
+    strcpy(c.nome_cliente, c_encontrado.cadastro);
+    printw("Cliente Encontrado: %s\n", c.nome_cliente);
 
-        printf("Produto encontrado: %s R$ %.2f\n", c.nome_produto, c.preco_produto);
+    printw("Digite o Código do produto:");
+    scanw("%d", &produto_t);
 
-        printf("Digite a quantidade de produtos:");
-        scanf("%d", &c.quantidade);
+    p_encontrado= buscarProdutos(produto_t);
 
-        c.preco_total = c.preco_produto * c.quantidade;
+    if(p_encontrado.codigo == -1){ 
+        printw("Código de produto não encontrado. Cadastro cancelado.\n");
+        fclose(fp_pedido);
+        return;
+    }
 
-        printf("Custo total: R$ %.2f\n", c.preco_total);
+    c.idproduto = produto_t;
+    strcpy(c.nome_produto, p_encontrado.descricao);
+    c.preco_produto = p_encontrado.preco;
 
-        fprintf(fp_pedido, "%s, %s, %s, %d, %s, %.2f, %d, %.2f",
+    printw("Produto encontrado: %s R$ %.2f\n", c.nome_produto, c.preco_produto);
+
+    printw("Digite a quantidade de produtos:");
+    scanw("%d", &c.quantidade);
+
+    c.preco_total = c.preco_produto * c.quantidade;
+
+    printw("Custo total: R$ %.2f\n", c.preco_total);
+
+    fprintf(fp_pedido, "%s, %s, %s, %d, %s, %.2f, %d, %.2f",
         c.numero_pedido, c.idcliente, c.nome_cliente, c.idproduto,
         c.nome_produto, c.preco_produto, c.quantidade, c.preco_total
-        );
+    );
         
-        printf("Pedido cadastrado!");
+    printw("Pedido cadastrado!");
         
-        fclose(fp_pedido);
+    fclose(fp_pedido);
 }
-
 
 void consultarPedido(){
     FILE *fp_pedido; 
@@ -98,13 +103,13 @@ void consultarPedido(){
 
     fp_pedido = fopen("pedido.csv", "r");
     if(fp_pedido== NULL){
-        printf("Erro ao abrir o arquivo\n");
+        printw("Erro ao abrir o arquivo\n");
         return;
     }
 
-    printf("Digite o numero do pedido que deseja consultar:");
-    getchar(); 
-    fgets(numero, 50, stdin);
+    printw("Digite o numero do pedido que deseja consultar:");
+    flushinp();
+    getstr(numero);
     numero[strcspn(numero, "\n")] = '\0';
 
     char linha[256];
@@ -115,20 +120,21 @@ void consultarPedido(){
         sscanf(linha, " %[^;];", c.numero_pedido);
 
         if(strcmp(c.numero_pedido, numero) == 0){
-            printf("\nPedido encontrado:\n");
-            printf("Número: %s\n", c.numero_pedido);
-            printf("Linha completa: %s\n", linha);
+            printw("\nPedido encontrado:\n");
+            printw("Número: %s\n", c.numero_pedido);
+            printw("Linha completa: %s\n", linha);
             encontrado = 1;
             break;
         }
     }
 
     if(!encontrado){
-        printf("Pedido não encontrado.\n");
+        printw("Pedido não encontrado.\n");
     }
 
     fclose(fp_pedido);
 }
+
  
 void listarPedido(){
     FILE *fp_pedido; 
@@ -136,17 +142,17 @@ void listarPedido(){
     
     fp_pedido = fopen("pedido.csv", "r");
     if(fp_pedido == NULL){
-        printf("Erro ao abrir o arquivo\n");
+        printw("Erro ao abrir o arquivo\n");
         return;
     }
     
     char linha[256];
     fgets(linha, sizeof(linha), fp_pedido);
-    printf("%s", linha);
+    printw("%s", linha);
     
     while(fgets(linha, sizeof(linha), fp_pedido)){
         sscanf(linha, " %[^;];", c.numero_pedido);
-        printf("Número: %s\n", c.numero_pedido);
+        printw("Número: %s\n", c.numero_pedido);
     }
 
     fclose(fp_pedido);
@@ -160,20 +166,20 @@ void removerPedido(){
     
     fp_pedido = fopen("pedido.csv", "r");
     if(fp_pedido == NULL){
-        printf("Erro ao abrir o arquivo\n");
+        printw("Erro ao abrir o arquivo\n");
         return;
     }
     
     temp_fp = fopen("temp_pedido.csv", "w");
     if(temp_fp == NULL){
-        printf("Erro ao criar o arquivo temporário\n");
+        printw("Erro ao criar o arquivo temporário\n");
         fclose(fp_pedido);
         return;
     }
     
-    printf("Digite o numero do pedido que deseja remover:");
-    getchar();
-    fgets(numero, 50, stdin);
+    printw("Digite o numero do pedido que deseja remover:");
+    flushinp();
+    getstr(numero);
     numero[strcspn(numero, "\n")] = '\0';
     
     char linha[256];
@@ -185,7 +191,7 @@ void removerPedido(){
 
         if(strcmp(c.numero_pedido, numero) == 0){
             encontrado = 1;
-            printf("Pedido removido com sucesso.\n");
+            printw("Pedido removido com sucesso.\n");
             continue;
         }
 
@@ -193,7 +199,7 @@ void removerPedido(){
     }
 
     if(!encontrado){
-        printf("Pedido não encontrado.\n");
+        printw("Pedido não encontrado.\n");
     }
     
     fclose(fp_pedido);
@@ -203,48 +209,80 @@ void removerPedido(){
     rename("temp_pedido.csv", "pedido.csv");
 }
 
-void menuPedido(){
-    int opcao;
-   
-   do{
-       printf("\n=============MENU==============\n");
-       printf("\n1-CADASTRE SEU PEDIDO\n");
-       printf("2-CONSULTE O PEDIDO\n");
-       printf("3-LISTE TODOS OS PEDIDOS\n");
-       printf("4-REMOVER PEDIDO\n");
-       printf("5-SAIR\n");
-       printf("Escolha uma opção:\n");
-       scanf("%d", &opcao);
-       getchar();
-       
-       switch(opcao){
-           case 1:
-            cadastrarPedido();
-             break;
-           
-           case 2:
-            consultarPedido();
-            break;
-          
-           case 3:
-            listarPedido();
-            break;
-           
-           case 4:
-            removerPedido();
-            break;
 
-           case 5:
-            break;
-           
-           default:
-           printf("Nenhum opção selecionada");
-           break;
+void menuPedido() {
+    int opcao = 0;
+    int highlight = 0;
+
+    char *opcoes[] = {
+        "Cadastrar Pedido",
+        "Consultar Pedido",
+        "Listar Pedidos",
+        "Remover Pedido",
+        "Sair"
+    };
+
+    int n_opcoes = 5;
+
+    initscr();            // inicia ncurses
+    clear();
+    noecho();
+    cbreak();
+    keypad(stdscr, TRUE); // permite setas
+
+    while(1) {
+        clear();
+        box(stdscr, 0, 0);
+        mvprintw(1, 2, "===== MENU DE PEDIDOS =====");
+
+        for (int i = 0; i < n_opcoes; i++) {
+            if (i == highlight)
+                attron(A_REVERSE);
+            
+            mvprintw(3 + i, 4, "%s", opcoes[i]);
+
+            if (i == highlight)
+                attroff(A_REVERSE);
         }
-   } while(opcao!= 5);
-}
 
-int mainPedido(){
-   menuPedido();
-   return 0;
+        int ch = getch();
+
+        switch(ch) {
+
+            case KEY_UP:
+                highlight--;
+                if (highlight < 0) highlight = n_opcoes - 1;
+                break;
+
+            case KEY_DOWN:
+                highlight++;
+                if (highlight >= n_opcoes) highlight = 0;
+                break;
+
+            case 10: // ENTER
+                opcao = highlight + 1;
+                clear();
+
+                if(opcao == 1) cadastrarPedido();
+                else if(opcao == 2) consultarPedido();
+                else if(opcao == 3) listarPedido();
+                else if(opcao == 4) removerPedido();
+                else if(opcao == 5) {
+                    endwin();
+                    return;
+                }
+
+                mvprintw(20, 2, "Pressione qualquer tecla para voltar...");
+                getch();
+                break;
+        }
+    }
+
+    endwin();
+}
+int main(){
+    menuPedido();
+
+    return 0;
+
 }
