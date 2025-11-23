@@ -4,7 +4,7 @@
 #include "produtos.c"
 
 
-int main() { //renomear para menuProdutos() quando se integrar na função principal.
+void mainProdutos() { //renomear para menuProdutos() quando se integrar na função principal.
     Produto p;
     int opcao;
    
