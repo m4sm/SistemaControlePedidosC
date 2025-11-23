@@ -5,86 +5,98 @@
 #include "../Modulo Cliente/cliente.h"
 #include "../Modulo Produto/produtos.h"
 
-
 void cadastrarPedido() {
+    char idPedido[30];
+    char codCliente[30];
+    char nomeCliente[100];
+
+    int codProduto;
+    char nomeProduto[100];
+    float precoProduto;
+
+    int quantidade;
+
     FILE *fp = fopen("pedido.csv", "a+");
-    if (fp == NULL) {
+    if (!fp) {
         printf("Erro ao abrir pedido.csv\n");
         return;
     }
 
-    // Criar cabeçalho se arquivo estiver vazio
-    char teste[5];
-    if (fgets(teste, sizeof(teste), fp) == NULL) {
-        fprintf(fp, "ID;CLIENTE;PRODUTO;PRECO\n");
+    // CABEÇALHO
+    fseek(fp, 0, SEEK_END);
+    if (ftell(fp) == 0) {
+        fprintf(fp, "ID;Cliente;Produto;Preco;Quantidade;Total\n");
     }
 
-    char idPedido[30];
-    char codCliente[30];
-    int codProduto;
+    printf("Digite o número do pedido: ");
+    scanf("%s", idPedido);
 
-    char nomeCliente[100];
-    char nomeProduto[100];
-    float precoProduto;
-
-    printf("ID do pedido: ");
-    fgets(idPedido, sizeof(idPedido), stdin);
-    idPedido[strcspn(idPedido, "\n")] = 0;
-
-    // Cliente
     printf("Código do cliente: ");
     scanf("%s", codCliente);
-    getchar();
 
     if (!buscarCliente(codCliente, nomeCliente)) {
-        printf("Cliente não encontrado. Cancelando.\n");
+        printf("Cliente não encontrado!\n");
         fclose(fp);
         return;
     }
 
-    // Produto
     printf("Código do produto: ");
     scanf("%d", &codProduto);
-    getchar();
 
     if (!buscarProduto(codProduto, nomeProduto, &precoProduto)) {
-        printf("Produto não encontrado. Cancelando.\n");
+        printf("Produto não encontrado!\n");
         fclose(fp);
         return;
     }
 
-    fprintf(fp, "%s;%s;%s;%.2f\n",
-        idPedido, nomeCliente, nomeProduto, precoProduto);
+    printf("Quantidade: ");
+    scanf("%d", &quantidade);
 
-    printf("Pedido cadastrado!\n");
+    float total = quantidade * precoProduto;
+
+    fprintf(fp, "%s;%s;%s;%.2f;%d;%.2f\n",
+            idPedido, nomeCliente, nomeProduto, precoProduto, quantidade, total);
+
+    printf("\nPedido cadastrado com sucesso!\n");
+    printf("Cliente: %s\n", nomeCliente);
+    printf("Produto: %s (R$ %.2f)\n", nomeProduto, precoProduto);
+    printf("Total: R$ %.2f\n", total);
 
     fclose(fp);
 }
 
+void analisarCliente(){
+
+}
 
 void consultarPedido(){
     FILE *fp; 
     cadastro c; 
     char numero[50];
-    
     int encontrado = 0;
+
     fp = fopen("pedido.csv", "r");
     if(fp == NULL){
-        printf("Erro ao abrir o arquivo");
-        }
-    
+        printf("Erro ao abrir o arquivo\n");
+        return;
+    }
+
     printf("Digite o numero do pedido que deseja consultar:");
+    getchar(); 
     fgets(numero, 50, stdin);
     numero[strcspn(numero, "\n")] = '\0';
-    
+
     char linha[256];
-    fgets(linha, sizeof(linha), fp);
-    
+
+    fgets(linha, sizeof(linha), fp); // pula cabeçalho
+
     while(fgets(linha, sizeof(linha), fp)){
-        sscanf(linha, " %[^,],%[^,],%[^\n]", c.numero_pedido, c.nome_cliente, c.produto_pedido);
+        sscanf(linha, " %[^;];", c.numero_pedido);
+
         if(strcmp(c.numero_pedido, numero) == 0){
             printf("\nPedido encontrado:\n");
-            printf("Número:%s\nCliente:%s\nProduto:%s", c.numero_pedido, c.nome_cliente, c.produto_pedido);
+            printf("Número: %s\n", c.numero_pedido);
+            printf("Linha completa: %s\n", linha);
             encontrado = 1;
             break;
         }
@@ -93,6 +105,7 @@ void consultarPedido(){
     if(!encontrado){
         printf("Pedido não encontrado.\n");
     }
+
     fclose(fp);
 }
  
@@ -102,19 +115,21 @@ void listarPedido(){
     
     fp = fopen("pedido.csv", "r");
     if(fp == NULL){
-        printf("Erro ao abrir o arquivo");
-        }
+        printf("Erro ao abrir o arquivo\n");
+        return;
+    }
     
     char linha[256];
     fgets(linha, sizeof(linha), fp);
     printf("%s", linha);
     
     while(fgets(linha, sizeof(linha), fp)){
-        sscanf(linha, " %[^,],%[^,],%[^\n]", c.numero_pedido, c.nome_cliente, c.produto_pedido);
-        printf("Número: %s | Cliente: %s | Produto: %s\n", c.numero_pedido, c.nome_cliente, c.produto_pedido);
+        sscanf(linha, " %[^;];", c.numero_pedido);
+        printf("Número: %s\n", c.numero_pedido);
     }
-}
 
+    fclose(fp);
+}
 
 void removerPedido(){
     FILE *fp, *temp_fp; 
@@ -124,18 +139,19 @@ void removerPedido(){
     
     fp = fopen("pedido.csv", "r");
     if(fp == NULL){
-        printf("Erro ao abrir o arquivo");
+        printf("Erro ao abrir o arquivo\n");
         return;
     }
     
     temp_fp = fopen("temp_pedido.csv", "w");
     if(temp_fp == NULL){
-        printf("Erro ao criar o arquivo temporário");
+        printf("Erro ao criar o arquivo temporário\n");
         fclose(fp);
         return;
     }
     
     printf("Digite o numero do pedido que deseja remover:");
+    getchar();
     fgets(numero, 50, stdin);
     numero[strcspn(numero, "\n")] = '\0';
     
@@ -144,12 +160,14 @@ void removerPedido(){
     fprintf(temp_fp, "%s", linha);
     
     while(fgets(linha, sizeof(linha), fp)){
-        sscanf(linha, " %[^,],%[^,],%[^\n]", c.numero_pedido, c.nome_cliente, c.produto_pedido);
+        sscanf(linha, " %[^;];", c.numero_pedido);
+
         if(strcmp(c.numero_pedido, numero) == 0){
             encontrado = 1;
             printf("Pedido removido com sucesso.\n");
             continue;
         }
+
         fprintf(temp_fp, "%s", linha);
     }
 
@@ -164,16 +182,16 @@ void removerPedido(){
     rename("temp_pedido.csv", "pedido.csv");
 }
 
-void menupedido(){
+void menuPedido(){
     int opcao;
    
    do{
        printf("\n=============MENU==============\n");
-       printf("\n============1-CADASTRE SEU PEDIDO===========\n");
-       printf("=============2-CONSULTE O PEDIDO===============\n");
-       printf("=============3-LISTE TODOS OS PEDIDOS===========\n");
-       printf("=================4-REMOVER PEDIDO==============\n");
-       printf("====================5-SAIR================\n");
+       printf("\n1-CADASTRE SEU PEDIDO\n");
+       printf("2-CONSULTE O PEDIDO\n");
+       printf("3-LISTE TODOS OS PEDIDOS\n");
+       printf("4-REMOVER PEDIDO\n");
+       printf("5-SAIR\n");
        printf("Escolha uma opção:\n");
        scanf("%d", &opcao);
        getchar();
@@ -203,12 +221,9 @@ void menupedido(){
            break;
         }
    } while(opcao!= 5);
-   
 }
 
 int main(){
-   menupedido();
+   menuPedido();
    return 0;
-    
 }
-

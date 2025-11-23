@@ -422,6 +422,37 @@ void removercliente(){
     rename("temp.csv", "clientes.csv");
 }
 
+int buscarCliente(const char *codigoBuscado, char *nomeCliente) {
+    FILE *fp = fopen("clientes.csv", "r");
+    if (!fp) {
+        printf("Erro ao abrir clientes.csv\n");
+        return 0;
+    }
+
+    char linha[500];
+    pessoa p;
+
+    while (fgets(linha, sizeof(linha), fp)) {
+        linha[strcspn(linha, "\n")] = 0;
+
+        int campos = sscanf(
+            linha,
+            "%[^;];%[^;];%[^;];%[^;];%[^;];%[^;];%[^;];%[^;];%[^;];%[^\n]",
+            p.codigo, p.cadastro, p.rua, p.setor, p.cidade,
+            p.estado, p.telefone, p.email, p.opcao1, p.opcao2
+        );
+
+        if (campos == 10 && strcmp(p.codigo, codigoBuscado) == 0) {
+            strcpy(nomeCliente, p.cadastro);  
+            fclose(fp);
+            return 1;
+        }
+    }
+
+    fclose(fp);
+    return 0;
+}
+
 void maincliente(){
     char resp;
 

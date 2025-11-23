@@ -16,5 +16,6 @@ void removerProduto();
 void listarProdutos();
 //funções gerais de manipulação
 void lerProduto();
+int buscarProduto();
 
 #endif
