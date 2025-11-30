@@ -1,3 +1,5 @@
 {
-    "C_Cpp.errorSquiggles": "enabled"
+    "files.associations": {
+        "produtos.h": "c"
+    }
 }

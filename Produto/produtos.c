@@ -1,7 +1,3 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <ctype.h> 
 #include <ncurses.h>
 #include "produtos.h"
 
@@ -181,7 +177,7 @@ void listarProdutos(const char *nomeArquivo) {
     getch();
 }
 
-Produto buscarPrdutos(){
+Produto buscarProdutos(){
     int codigo_p;
     FILE *fp_produto;
     char linha[256];    
@@ -190,6 +186,9 @@ Produto buscarPrdutos(){
 
     if(fp_produto == NULL){
         printw("Erro ao abrir o arquivo");
+        getch();
+        Produto vazio = {0};
+        return vazio;
     }
 
     Produto p_busca;
