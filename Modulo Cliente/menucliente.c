@@ -163,8 +163,8 @@ void cadastrarcliente()
     clear();
     int existe_codigo = 0;
 
-    fp_cliente= fopen("clientes.csv", "a+");
-    if (fp_cliente == NULL)
+    fp = fopen("clientes.csv", "a+");
+    if (fp == NULL)
     {
         mvprintw(2, 2, "Erro ao abrir o arquivo.");
         getch();
@@ -301,8 +301,8 @@ void consultarcliente()
     clear();
     char codigo_busca[30];
 
-    fp_cliente= fopen("clientes.csv", "r");
-    if (fp_cliente == NULL)
+    fp = fopen("clientes.csv", "r");
+    if (fp == NULL)
     {
         mvprintw(2, 2, "Erro ao abrir arquivo.");
         getch();
@@ -354,8 +354,8 @@ void listarcliente()
     clear();
     int linha = 2;
 
-    fp_cliente = fopen("clientes.csv", "r");
-    if (fp_cliente == NULL)
+    fp = fopen("clientes.csv", "r");
+    if (fp == NULL)
     {
         mvprintw(2, 2, "Erro ao abrir arquivo.");
         getch();
@@ -418,8 +418,8 @@ void removercliente()
 
     nc_input(2, 2, "Digite o codigo do cliente:", codigo_busca, 30);
 
-    fp_cliente = fopen("clientes.csv", "r");
-    if (fp_cliente == NULL)
+    fp = fopen("clientes.csv", "r");
+    if (fp == NULL)
     {
         mvprintw(2, 2, "Erro ao abrir arquivo.");
         getch();
@@ -499,12 +499,13 @@ pessoa buscarCliente(const char *codigo_c){
     if(fp_cliente == NULL){
        mvprintw(2,2,"Erro ao abrir o arquivo.");
        getch();
-       return;
+       pessoa vazio = {0};
+        return vazio;
     }
 
     pessoa c_busca;
 
-    while(fgets(linha, sizeof(linha), fp)){
+    while(fgets(linha, sizeof(linha), fp_cliente)){
         linha[strcspn(linha, "\n")] = 0;
 
         int cmp= sscanf(linha, "%[^;]; %[^;]; %[^;]; %[^;]; %[^;]; %[^;]; %[^;]; %[^;]; %[^;]; %[^\n]", 
@@ -513,12 +514,13 @@ pessoa buscarCliente(const char *codigo_c){
          
         if(cmp >= 2 && strcmp(codigo_c, c_busca.codigo)){
             fclose(fp_cliente);
+            return c_busca;
         }
     }
 }
 
 //-------------------------------------
-// MENU PRINCIPAL (ncurses)
+// MENU CLIENTE (ncurses)
 //-------------------------------------
 void maincliente()
 {
