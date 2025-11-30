@@ -8,14 +8,15 @@ typedef struct {
     int quantidade;
 } Produto;
 
-// Funções básicas
+// funções basicas 
+void cadastrarProduto(const char *nomeArquivo);
+void consultarProduto(const char *nomeArquivo);
+void removerProduto(const char *nomeArquivo);
+void listarProdutos(const char *nomeArquivo);
+Produto buscarProduto(const char *nomeArquivo, int codigoBuscado);
 
-void cadastrarProduto();
-void consultarProduto();
-void removerProduto();
-void listarProdutos();
-Produto buscarProdutos(int código_p);
-//funções gerais de manipulação
-void lerProduto();
+// Funções auxiliares de manipulação
+void lerProduto(Produto *p);
+int desejaContinuar(); 
 
 #endif
