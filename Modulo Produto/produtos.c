@@ -188,7 +188,6 @@ Produto buscarProduto(const char *nomeArquivo, int codigoBuscado) {
 
     if (fp == NULL) return p;
 
-<<<<<<< HEAD
     while (fgets(linha, sizeof(linha), fp_produto)) {
         
         linha[strcspn(linha, "\n")] = 0; 
@@ -204,12 +203,11 @@ Produto buscarProduto(const char *nomeArquivo, int codigoBuscado) {
                 fclose(fp_produto);
                 return p_busca; 
             }
-=======
+
     while (fscanf(fp, "%d,%99[^,],%d,%f\n", &p.codigo, p.descricao, &p.quantidade, &p.preco) == 4) {
         if (p.codigo == codigoBuscado) {
             fclose(fp);
             return p; 
->>>>>>> refs/remotes/origin/main
         }
     }
 
