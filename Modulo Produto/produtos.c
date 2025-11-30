@@ -189,7 +189,7 @@ Produto buscarPrdutos(){
     fp_produto = fopen("listadeprodutos.csv", "r");
 
     if(fp_produto == NULL){
-        printf("Erro ao abrir o arquivo");
+        printw("Erro ao abrir o arquivo");
     }
 
     Produto p_busca;
