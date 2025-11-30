@@ -4,8 +4,8 @@
 #include <ncurses.h>
 
 #include "pedido.h"
-#include "../Modulo Cliente/cliente.h"
-#include "../Modulo Produto/produtos.h"
+#include "../Cliente/cliente.h"
+#include "../Produto/produtos.h"
 
 
 
