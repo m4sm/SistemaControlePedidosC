@@ -206,6 +206,47 @@ void cadastrarcliente()
             move(7, 2);
             clrtoeol();
         }
+
+        if (strlen(p.cadastro) == 11 &&
+            (strcmp(p.cadastro, "00000000000") == 0 ||
+            strcmp(p.cadastro, "11111111111") == 0 ||
+            strcmp(p.cadastro, "22222222222") == 0 ||
+            strcmp(p.cadastro, "33333333333") == 0 ||
+            strcmp(p.cadastro, "44444444444") == 0 ||
+            strcmp(p.cadastro, "55555555555") == 0 ||
+            strcmp(p.cadastro, "66666666666") == 0 ||
+            strcmp(p.cadastro, "77777777777") == 0 ||
+            strcmp(p.cadastro, "88888888888") == 0 ||
+            strcmp(p.cadastro, "99999999999") == 0))
+        {
+            attron(COLOR_PAIR(4));
+            mvprintw(10, 2, "CPF invalido! (repetido)");
+            attroff(COLOR_PAIR(4));
+            fclose(fp);
+            getch();
+            return;
+        }
+
+        if (strlen(p.cadastro) == 14 &&
+            (strcmp(p.cadastro, "00000000000000") == 0 ||
+            strcmp(p.cadastro, "11111111111111") == 0 ||
+            strcmp(p.cadastro, "22222222222222") == 0 ||
+            strcmp(p.cadastro, "33333333333333") == 0 ||
+            strcmp(p.cadastro, "44444444444444") == 0 ||
+            strcmp(p.cadastro, "55555555555555") == 0 ||
+            strcmp(p.cadastro, "66666666666666") == 0 ||
+            strcmp(p.cadastro, "77777777777777") == 0 ||
+            strcmp(p.cadastro, "88888888888888") == 0 ||
+            strcmp(p.cadastro, "99999999999999") == 0))
+        {
+            attron(COLOR_PAIR(4));
+            mvprintw(10, 2, "CNPJ invalido! (repetido)");
+            attroff(COLOR_PAIR(4));
+            fclose(fp);
+            getch();
+            return;
+        }
+
     } while (strlen(p.cadastro) != 11 && strlen(p.cadastro) != 14);
 
 
