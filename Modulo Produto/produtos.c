@@ -1,149 +1,138 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <ctype.h> 
+#include <ncurses.h>
 #include "produtos.h"
-#include <ctype.h>
 
-
-//Função "Deseja Continuar?"// Usada em laços de repetição como condição de parada.
+// Função "Deseja Continuar?"
 int desejaContinuar() {
     char resposta;
-    do {
-        printf("Deseja Continuar? (S/N): ");
-        scanf("%c", &resposta);
+    while (1) {
+        printw("\nDeseja Continuar? (S/N): ");
+        refresh();
+        resposta = getch();
         resposta = toupper(resposta);
-        getchar();
 
-        if(resposta == 'S')
-            return 1;
-        else if( resposta == 'N')
-            return 0;
-        else
-            printf("Opção invalida! Digite S ou N. \n");
+        if (resposta == 'S') return 1;
+        if (resposta == 'N') return 0;
 
-    } while (1);
-    getchar();
+        printw("\nOpcao invalida! Digite S ou N.\n");
+    }
 }
 
-// Lê os dados de um produto pelo teclado e armazena em uma struct Produto. Usa ponteiro.
+// Lê os dados de um produto via ncurses
 void lerProduto(Produto *p) {
-        
-   char entrada[100]; // buffer temporário para leitura
+    char entrada[100];
 
-    printf("Digite o código: ");
-    fgets(entrada, sizeof(entrada), stdin);
-    entrada[strcspn(entrada, "\n")] = '\0'; // remove o \n
-    p->codigo = atoi(entrada); // converte string para int
+    printw("Digite o codigo: ");
+    refresh();
+    getnstr(entrada, 99);
+    p->codigo = atoi(entrada);
 
-    printf("Digite a descrição: ");
-    fgets(p->descricao, sizeof(p->descricao), stdin);
-    p->descricao[strcspn(p->descricao, "\n")] = '\0'; // remove o \n
+    printw("Digite a descricao: ");
+    refresh();
+    getnstr(p->descricao, 99); // Aumentei um pouco o buffer de leitura segura
 
-    printf("Digite a quantidade: ");
-    fgets(entrada, sizeof(entrada), stdin);
-    entrada[strcspn(entrada, "\n")] = '\0';
+    printw("Digite a quantidade: ");
+    refresh();
+    getnstr(entrada, 99);
     p->quantidade = atoi(entrada);
 
-    printf("Digite o preço: ");
-    fgets(entrada, sizeof(entrada), stdin);
-    entrada[strcspn(entrada, "\n")] = '\0';
-    p->preco = atof(entrada); // converte string para float
+    printw("Digite o preco: ");
+    refresh();
+    getnstr(entrada, 99);
+    p->preco = atof(entrada);
+
+    printw("\n");
 }
 
-// Função para escrever o produto no arquivo
 void cadastrarProduto(const char *nomeArquivo){
     Produto p;
-
     lerProduto(&p);
 
-    //Adiciona com append no arquivo
     FILE *arq = fopen(nomeArquivo, "a");
     if (arq == NULL) {
-        printf("Erro ao abrir o arquivo %s!\n", nomeArquivo);
+        printw("Erro ao abrir o arquivo %s!\n", nomeArquivo);
         return;
     }
-
-    // Grava o produto no arquivo CSV
-    fprintf(arq, "%d,%s,%d,%.2f\n",
-            p.codigo, p.descricao, p.quantidade, p.preco);
-
+    
+    // Formato CSV simples
+    fprintf(arq, "%d,%s,%d,%.2f\n", p.codigo, p.descricao, p.quantidade, p.preco);
     fclose(arq);
 
-    printf("\nProduto cadastrado com sucesso!\n");
+    printw("\nProduto cadastrado com sucesso!\n");
 }
 
-// Função para consultar o produto
 void consultarProduto(const char *nomeArquivo) {
     FILE *fp = fopen(nomeArquivo, "r");
     if (fp == NULL) {
-        printf("Erro ao abrir o arquivo.\n");
+        printw("Erro ao abrir o arquivo.\n");
         return;
     }
 
     int codigoBusca;
-    printf("Digite o código do produto a consultar: ");
-    scanf("%d", &codigoBusca);
-    getchar(); // limpa o \n
-
+    char entrada[50];
+    
+    printw("Digite o codigo do produto a consultar: ");
+    refresh();
+    getnstr(entrada, 49); // Usar getnstr é mais seguro que scanw em ncurses
+    codigoBusca = atoi(entrada);
+    
     Produto p;
     int encontrado = 0;
 
     // Lê linha por linha do CSV
-    while (fscanf(fp, "%d,%49[^,],%d,%f\n", &p.codigo, p.descricao, &p.quantidade, &p.preco) == 4) {
+    while (fscanf(fp, "%d,%99[^,],%d,%f\n", &p.codigo, p.descricao, &p.quantidade, &p.preco) == 4) {
         if (p.codigo == codigoBusca) {
-            printf("\n=== Produto Encontrado ===\n");
-            printf("Código: %d\n", p.codigo);
-            printf("Descrição: %s\n", p.descricao);
-            printf("Quantidade: %d\n", p.quantidade);
-            printf("Preço: %.2f\n", p.preco);
+            printw("\n=== Produto Encontrado ===\n");
+            printw("Codigo: %d\n", p.codigo);
+            printw("Descricao: %s\n", p.descricao);
+            printw("Quantidade: %d\n", p.quantidade);
+            printw("Preco: %.2f\n", p.preco);
             encontrado = 1;
             break;
         }
     }
 
     if (!encontrado) {
-        printf("\nProduto com código %d não encontrado.\n", codigoBusca);
+        printw("\nProduto com codigo %d nao encontrado.\n", codigoBusca);
     }
-
     fclose(fp);
+    printw("\nPressione qualquer tecla para voltar...");
+    getch();
 }
-
-//consultar produtos
 
 void removerProduto(const char *nomeArquivo) {
     FILE *fp = fopen(nomeArquivo, "r");
     if (fp == NULL) {
-        printf("Erro ao abrir o arquivo.\n");
+        printw("Erro ao abrir o arquivo.\n");
         return;
     }
 
     FILE *temp = fopen("temp.csv", "w");
     if (temp == NULL) {
-        printf("Erro ao criar arquivo temporário.\n");
+        printw("Erro ao criar arquivo temporario.\n");
         fclose(fp);
         return;
     }
 
     int codigoRemover;
-    printf("Digite o código do produto a remover: ");
-    scanf("%d", &codigoRemover);
-    getchar(); // limpar \n
-
+    char entrada[50];
+    printw("Digite o codigo do produto a remover: ");
+    refresh();
+    getnstr(entrada, 49);
+    codigoRemover = atoi(entrada);
+    
     Produto p;
     int encontrado = 0;
 
-    // Lê linha por linha do arquivo original
-    while (fscanf(fp, "%d,%49[^,],%d,%f\n",
-                  &p.codigo, p.descricao, &p.quantidade, &p.preco) == 4) {
-
+    while (fscanf(fp, "%d,%99[^,],%d,%f\n", &p.codigo, p.descricao, &p.quantidade, &p.preco) == 4) {
         if (p.codigo == codigoRemover) {
             encontrado = 1;
-            continue; // não grava no arquivo temporário
+            continue; 
         }
-
-        // Regrava linha no arquivo temporário
-        fprintf(temp, "%d,%s,%d,%.2f\n",
-                p.codigo, p.descricao, p.quantidade, p.preco);
+        fprintf(temp, "%d,%s,%d,%.2f\n", p.codigo, p.descricao, p.quantidade, p.preco);
     }
 
     fclose(fp);
@@ -152,57 +141,54 @@ void removerProduto(const char *nomeArquivo) {
     if (encontrado) {
         remove(nomeArquivo);
         rename("temp.csv", nomeArquivo);
-        printf("Produto removido com sucesso!\n");
+        printw("Produto removido com sucesso!\n");
     } else {
         remove("temp.csv");
-        printf("Produto com código %d não encontrado.\n", codigoRemover);
+        printw("Produto com codigo %d nao encontrado.\n", codigoRemover);
     }
+    printw("\nPressione qualquer tecla para voltar...");
+    getch();
 }
 
-//função para listar produto.
 void listarProdutos(const char *nomeArquivo) {
     FILE *fp = fopen(nomeArquivo, "r");
     if (fp == NULL) {
-        printf("Nenhum produto cadastrado ou erro ao abrir o arquivo.\n");
+        printw("Nenhum produto cadastrado ou erro ao abrir o arquivo.\n");
         return;
     }
 
     Produto p;
     int count = 0;
 
-    printf("\n=== Lista de Produtos ===\n");
+    clear(); // Limpa a tela para a listagem
+    printw("=== Lista de Produtos ===\n");
 
-    // Lê linha por linha do CSV
-    while (fscanf(fp, "%d,%49[^,],%d,%f\n",
-                  &p.codigo, p.descricao, &p.quantidade, &p.preco) == 4) {
-
-        printf("\nProduto %d:\n", ++count);
-        printf("  Código     : %d\n", p.codigo);
-        printf("  Descrição  : %s\n", p.descricao);
-        printf("  Quantidade : %d\n", p.quantidade);
-        printf("  Preço      : R$ %.2f\n", p.preco);
+    while (fscanf(fp, "%d,%99[^,],%d,%f\n", &p.codigo, p.descricao, &p.quantidade, &p.preco) == 4) {
+        printw("\nProduto %d:\n", ++count);
+        printw("  Codigo     : %d\n", p.codigo);
+        printw("  Descricao  : %s\n", p.descricao);
+        printw("  Quantidade : %d\n", p.quantidade);
+        printw("  Preco      : R$ %.2f\n", p.preco);
+        
     }
 
     if (count == 0) {
-        printf("Nenhum produto encontrado.\n");
+        printw("Nenhum produto encontrado.\n");
     }
 
     fclose(fp);
+    printw("\nPressione qualquer tecla para voltar...");
+    getch();
 }
 
-Produto buscarPrdutos(){
-    int codigo_p;
-    FILE *fp_produto;
-    char linha[256];    
-    
-    fp_produto = fopen("listadeprodutos.csv", "r");
+Produto buscarProduto(const char *nomeArquivo, int codigoBuscado) {
+    FILE *fp = fopen(nomeArquivo, "r");
+    Produto p;
+    p.codigo = -1; // Valor padrão de erro
 
-    if(fp_produto == NULL){
-        printf("Erro ao abrir o arquivo");
-    }
-   
-    Produto p_busca;
+    if (fp == NULL) return p;
 
+<<<<<<< HEAD
     while (fgets(linha, sizeof(linha), fp_produto)) {
         
         linha[strcspn(linha, "\n")] = 0; 
@@ -218,6 +204,16 @@ Produto buscarPrdutos(){
                 fclose(fp_produto);
                 return p_busca; 
             }
+=======
+    while (fscanf(fp, "%d,%99[^,],%d,%f\n", &p.codigo, p.descricao, &p.quantidade, &p.preco) == 4) {
+        if (p.codigo == codigoBuscado) {
+            fclose(fp);
+            return p; 
+>>>>>>> refs/remotes/origin/main
         }
     }
+
+    fclose(fp);
+    p.codigo = -1; // Não achou
+    return p;
 }
