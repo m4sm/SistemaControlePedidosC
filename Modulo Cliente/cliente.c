@@ -1,5 +1,22 @@
-
+#include <ncurses.h>
 #include "cliente.h"
+
+FILE *fp;
+char texto[1000];
+
+//-------------------------------------
+// Função auxiliar para entrada ncurses
+//-------------------------------------
+void nc_input(int y, int x, const char *msg, char *buf, int size)
+{
+    attron(COLOR_PAIR(2));
+    mvprintw(y, x, "%s", msg);
+    attroff(COLOR_PAIR(2));
+
+    echo();
+    mvgetnstr(y + 1, x, buf, size);
+    noecho();
+}
 
 int valida_cpf(char cpf[12]){
     int soma = 0;
@@ -70,7 +87,6 @@ int valida_cnpj(char cnpj[15]){
         return 0;
     }
 
-
     soma += (cnpj[0] - '0') * 5 + (cnpj[1] - '0') * 4 + (cnpj[2] - '0') * 3 + (cnpj[3] - '0') * 2;
 
     for(int i = 4; i < 12; i++){
@@ -119,322 +135,377 @@ int valida_cnpj(char cnpj[15]){
     return 1; //CNPJ Valido
 }
 
-int analisacliente(char *cadastro) {
+
+int analisacliente(char *cadastro)
+{
     FILE *fp_analisa = fopen("clientes.csv", "r");
     char codigo[30], cpfcnpj[30];
 
-    if (fp_analisa == NULL) {
-        printf("Erro ao abrir arquivo .");
+    if (fp_analisa == NULL)
         return 0;
-    }
 
-    while (fgets(texto, sizeof(texto), fp)) {
+    while (fgets(texto, sizeof(texto), fp_analisa))
+    {
         sscanf(texto, "%[^;];%[^;];", codigo, cpfcnpj);
-        if (strcmp(cadastro, cpfcnpj) == 0) {
-            fclose(fp);
-            return 1; // ja existe
+        if (strcmp(cadastro, cpfcnpj) == 0)
+        {
+            fclose(fp_analisa);
+            return 1;
         }
     }
-
     fclose(fp_analisa);
-
     return 0; // nao existe
 }
 
-void cadastrarcliente() {
+
+void cadastrarcliente()
+{
+    clear();
     int existe_codigo = 0;
 
     fp = fopen("clientes.csv", "a+");
-    if(fp == NULL) {
-        printf("Erro ao abrir o arquivo.\n");
+    if (fp == NULL)
+    {
+        mvprintw(2, 2, "Erro ao abrir o arquivo.");
+        getch();
         return;
     }
 
-    printf("Digite o codigo do cliente: ");
-    scanf("%s", p.codigo);
+    nc_input(2, 2, "Digite o codigo do cliente:", p.codigo, 30);
 
-    rewind(fp); 
+    rewind(fp);
 
-    // Ver se o código existe
-    while(fgets(texto, sizeof(texto), fp)) {
+    //Ver se o código existe
+    while (fgets(texto, sizeof(texto), fp))
+    {
         char codigo_existente[30];
         sscanf(texto, "%[^;];", codigo_existente);
-        if(strcmp(p.codigo, codigo_existente) == 0) {
-            existe_codigo = 1;
-            break;
+        if (strcmp(p.codigo, codigo_existente) == 0)
+        {
+            mvprintw(10, 2, "Codigo ja existe!");
+            fclose(fp);
+            getch();
+            return;
         }
     }
 
-    if(existe_codigo) {
-        printf("Este cóodigo ja existe. Digite outro.\n");
-        fclose(fp);
-        return;
-    }
+    do {
+        nc_input(5, 2, "Digite CPF(11) ou CNPJ(14): ", p.cadastro, 30);
 
-    printf("Digite o numero de cadastro do cliente (CPF ou CNPJ): ");
-    scanf("%s", p.cadastro);
+        if (strlen(p.cadastro) != 11 && strlen(p.cadastro) != 14) {
 
-    switch(strlen(p.cadastro)) {
+            attron(COLOR_PAIR(4));
+            mvprintw(7, 2, "Tamanho incorreto! Deve ter 11 ou 14 digitos.");
+            attroff(COLOR_PAIR(4));
 
+            getch();
+            move(7, 2);
+            clrtoeol();
+        }
+    } while (strlen(p.cadastro) != 11 && strlen(p.cadastro) != 14);
+
+
+    switch(strlen(p.cadastro)){
+            
         case 11: // CPF
             strcpy(p.cpf, p.cadastro);
 
-            if(!valida_cpf(p.cpf)) {
-                printf("CPF inválido!\n");
-                fclose(fp);
-                return;
-            }
+        if(!valida_cpf(p.cpf)){
 
-            // analisa cliente
-            while(analisacliente(p.cadastro)) {
-                printf("O CPF %s ja esta cadastrado no sistema.\n", p.cadastro);
-                printf("Digite um CPF diferente: ");
-                scanf("%s", p.cadastro);
-            }
+            attron(COLOR_PAIR(4));
+            mvprintw(10, 2, "CPF invalido!");
+            attroff(COLOR_PAIR(4));
 
-            printf("Digite a rua, setor, cidade, estado, telefone e email: ");
-
-            scanf(" %[^\n]", p.rua);
-            scanf(" %[^\n]", p.setor);
-            scanf(" %[^\n]", p.cidade);
-            scanf(" %[^\n]", p.estado);
-            scanf(" %[^\n]", p.telefone);
-            scanf(" %[^\n]", p.email);
-      
-            printf("Digite o nome e o celular: ");
-            scanf(" %[^\n]", p.nome);
-            scanf(" %[^\n]", p.celular);
-
-            strcpy(p.opcao1, p.nome);
-            strcpy(p.opcao2, p.celular);
-
-            fprintf(fp, "%s;%s;%s;%s;%s;%s;%s;%s;%s;%s\n", p.codigo, p.cadastro, p.rua, 
-                p.setor, p.cidade, p.estado, p.telefone, p.email, p.opcao1, p.opcao2);
-                        
-            printf("Cliente cadastrado com sucesso! ");
-                        
             fclose(fp);
-            break;
+            getch();
+            return;
+        }
 
-        case 14: // CNPJ
+        while (analisacliente(p.cadastro)){
+            mvprintw(12, 2, "Ja existe no sistema. Digite outro:");
+            nc_input(13, 2, ">", p.cadastro, 30);
+        }
+
+        nc_input(15, 2, "Rua:", p.rua, 100);
+        nc_input(17, 2, "Setor:", p.setor, 100);
+        nc_input(19, 2, "Cidade:", p.cidade, 100);
+        nc_input(21, 2, "Estado:", p.estado, 50);
+        nc_input(23, 2, "Telefone:", p.telefone, 50);
+        nc_input(25, 2, "Email:", p.email, 100);
+
+        nc_input(27, 2, "Nome:", p.nome, 100);
+        nc_input(29, 2, "Celular:", p.celular, 50);
+
+        strcpy(p.opcao1, p.nome);
+        strcpy(p.opcao2, p.celular);
+
+        fprintf(fp, "%s;%s;%s;%s;%s;%s;%s;%s;%s;%s\n",
+            p.codigo, p.cadastro, p.rua, p.setor, p.cidade, p.estado,
+            p.telefone, p.email, p.opcao1, p.opcao2);
+
+        fclose(fp);
+        mvprintw(32, 2, "Cliente cadastrado com sucesso!");
+        getch();
+        break;
+
+        case 14: //CNPJ
             strcpy(p.cnpj, p.cadastro);
 
-            if (!valida_cnpj(p.cnpj)) {
-                printf("CNPJ invalido!\n");
+            if(!valida_cnpj(p.cnpj)){
+
+                attron(COLOR_PAIR(4));
+                mvprintw(10, 2, "CNPJ invalido!");
+                attroff(COLOR_PAIR(4));
+
                 fclose(fp);
+                getch();
                 return;
             }
 
-            // analisa cliente
-            while(analisacliente(p.cadastro)) {
-                printf("O CNPJ %s ja esta cadastrado no sistema.\n", p.cadastro);
-                printf("Digite um CNPJ diferente: ");
-                scanf("%s", p.cadastro);
+            while (analisacliente(p.cadastro)){
+                mvprintw(12, 2, "Ja existe no sistema. Digite outro:");
+                nc_input(13, 2, ">", p.cadastro, 30);
             }
 
-            printf("Digite a rua, setor, cidade, estado, telefone e email: ");
+            nc_input(15, 2, "Rua:", p.rua, 100);
+            nc_input(17, 2, "Setor:", p.setor, 100);
+            nc_input(19, 2, "Cidade:", p.cidade, 100);
+            nc_input(21, 2, "Estado:", p.estado, 50);
+            nc_input(23, 2, "Telefone:", p.telefone, 50);
+            nc_input(25, 2, "Email:", p.email, 100);
 
-            scanf(" %[^\n]", p.rua);
-            scanf(" %[^\n]", p.setor);
-            scanf(" %[^\n]", p.cidade);
-            scanf(" %[^\n]", p.estado);
-            scanf(" %[^\n]", p.telefone);
-            scanf(" %[^\n]", p.email);
-        
-            printf("Digite a razao social e o nome de contato: ");
-            scanf(" %[^\n]", p.razao_social);
-            scanf(" %[^\n]", p.nome_contato);
-
+            nc_input(27, 2, "Razao Social:", p.razao_social, 100);
+            nc_input(29, 2, "Contato:", p.nome_contato, 100);
             strcpy(p.opcao1, p.razao_social);
             strcpy(p.opcao2, p.nome_contato);
 
-            fprintf(fp, "%s;%s;%s;%s;%s;%s;%s;%s;%s;%s\n", p.codigo, p.cadastro, p.rua, 
-                    p.setor, p.cidade, p.estado, p.telefone, p.email, p.opcao1, p.opcao2);
-                        
-            printf("Cliente cadastrado com sucesso! ");
-                        
-            fclose(fp);            
-            break;
+            fprintf(fp, "%s;%s;%s;%s;%s;%s;%s;%s;%s;%s\n",
+            p.codigo, p.cadastro, p.rua, p.setor, p.cidade, p.estado,
+            p.telefone, p.email, p.opcao1, p.opcao2);
 
-        default:
-            printf("Numero invalido.\n");
             fclose(fp);
-            return;
+
+            attron(COLOR_PAIR(3));
+            mvprintw(32, 2, "Cliente cadastrado com sucesso!");
+            attroff(COLOR_PAIR(3));
+
+            getch();
+            break;
     }
-
-}
-
-void consultarcliente(){
-    int encontrado = 0;
-
-    char codigo_busca[30];
     
-    fp = fopen("clientes.csv", "r");
+}
 
-    if(fp == NULL){
-        printf("Erro ao abrir arquivo. \n");
+
+void consultarcliente()
+{
+    clear();
+    char codigo_busca[30];
+
+    fp = fopen("clientes.csv", "r");
+    if (fp == NULL)
+    {
+        mvprintw(2, 2, "Erro ao abrir arquivo.");
+        getch();
         return;
     }
 
-    printf("Digite o codigo do cliente que deseja: ");
-    scanf("%s", codigo_busca);
+    nc_input(2, 2, "Digite o codigo do cliente:", codigo_busca, 30);
 
-        while (fgets(texto, sizeof(texto), fp)) {
-            texto[strcspn(texto, "\n")] = 0; // Remove o \n
-
-            int campos = sscanf(texto, "%[^;];%[^;];%[^;];%[^;];%[^;];%[^;];%[^;];%[^;];%[^;];%[^\n]",
-                                p.codigo, p.cadastro, p.rua, p.setor, p.cidade,
-                                p.estado, p.telefone, p.email, p.opcao1, p.opcao2);
-
-            if (campos == 10) {
-                if (strcmp(codigo_busca, p.codigo) == 0) {
-                    printf("Cliente encontrado!\n");
-                    printf("Codigo: %s\n", p.codigo);
-                    printf("Cadastro: %s\n", p.cadastro);
-                    printf("Rua: %s\n", p.rua);
-                    printf("Setor: %s\n", p.setor);
-                    printf("Cidade: %s\n", p.cidade);
-                    printf("Estado: %s\n", p.estado);
-                    printf("Telefone: %s\n", p.telefone);
-                    printf("Email: %s\n", p.email);
-                    printf("Opcao 1: %s\n", p.opcao1);
-                    printf("Opcao 2: %s\n", p.opcao2);
-                    encontrado = 1;
-                    break;
-                }
-        }
-    }
-
-    if (!encontrado) {
-        printf("Erro: cliente nao existe.\n");
-    }
-
-    fclose(fp);
-}
-
-void listarcliente(){
-      
-    fp = fopen("clientes.csv", "r");
-
-    if(fp == NULL){
-        printf("Erro ao abrir arquivo. \n");
-        return;
-    }
-
-
-   while (fgets(texto, sizeof(texto), fp)) {
-            texto[strcspn(texto, "\n")] = 0; // Remove o \n
-
-            int campos = sscanf(texto, "%[^;];%[^;];%[^;];%[^;];%[^;];%[^;];%[^;];%[^;];%[^;];%[^\n]",
-                                p.codigo, p.cadastro, p.rua, p.setor, p.cidade,
-                                p.estado, p.telefone, p.email, p.opcao1, p.opcao2);
-
-            if (campos == 10) {
-            
-                    printf("\nCodigo: %s\n", p.codigo);
-                    printf("Cadastro: %s\n", p.cadastro);
-                    printf("Rua: %s\n", p.rua);
-                    printf("Setor: %s\n", p.setor);
-                    printf("Cidade: %s\n", p.cidade);
-                    printf("Estado: %s\n", p.estado);
-                    printf("Telefone: %s\n", p.telefone);
-                    printf("Email: %s\n", p.email);
-                    printf("Opcao 1: %s\n", p.opcao1);
-                    printf("Opcao 2: %s\n\n", p.opcao2);
-                                
-        }
-    }
-
-    fclose(fp);
-}
-
-void removercliente(){
     int encontrado = 0;
+    while (fgets(texto, sizeof(texto), fp))
+    {
+        sscanf(texto, "%[^;];%[^;];%[^;];%[^;];%[^;];%[^;];%[^;];%[^;];%[^;];%[^\n]",
+               p.codigo, p.cadastro, p.rua, p.setor, p.cidade, p.estado, p.telefone, p.email, p.opcao1, p.opcao2);
+
+        if (strcmp(codigo_busca, p.codigo) == 0)
+        {
+            attron(COLOR_PAIR(3));
+            mvprintw(5, 2, "Cliente encontrado!");
+            attroff(COLOR_PAIR(3));
+
+            mvprintw(7, 2, "Codigo: %s", p.codigo);
+            mvprintw(8, 2, "Cadastro: %s", p.cadastro);
+            mvprintw(9, 2, "Rua: %s", p.rua);
+            mvprintw(10, 2, "Setor: %s", p.setor);
+            mvprintw(11, 2, "Cidade: %s", p.cidade);
+            mvprintw(12, 2, "Estado: %s", p.estado);
+            mvprintw(13, 2, "Telefone: %s", p.telefone);
+            mvprintw(14, 2, "Email: %s", p.email);
+            mvprintw(15, 2, "Opcao1: %s", p.opcao1);
+            mvprintw(16, 2, "Opcao2: %s", p.opcao2);
+            encontrado = 1;
+            break;
+        }
+    }
+
+    if (!encontrado){
+        attron(COLOR_PAIR(4));
+        mvprintw(5, 2, "Cliente NAO encontrado.");
+        attron(COLOR_PAIR(4));
+    }
+
+    fclose(fp);
+    getch();
+}
+
+
+void listarcliente()
+{
+    clear();
+    int linha = 2;
+
+    fp = fopen("clientes.csv", "r");
+    if (fp == NULL)
+    {
+        mvprintw(2, 2, "Erro ao abrir arquivo.");
+        getch();
+        return;
+    }
+
+    while (fgets(texto, sizeof(texto), fp))
+    {
+        sscanf(texto, "%[^;];%[^;];%[^;];%[^;];%[^;];%[^;];%[^;];%[^;];%[^;];%[^\n]",
+               p.codigo, p.cadastro, p.rua, p.setor, p.cidade, p.estado, p.telefone, p.email, p.opcao1, p.opcao2);
+
+        attron(COLOR_PAIR(7));
+        mvprintw(linha, 2, "Codigo: %s", p.codigo);
+        linha++;
+        mvprintw(linha, 2, "Cadastro: %s", p.cadastro);
+        linha++;
+        mvprintw(linha, 2, "Rua: %s", p.rua);
+        linha++;
+        mvprintw(linha, 2, "Setor: %s", p.setor);
+        linha++;
+        mvprintw(linha, 2, "Cidade: %s", p.cidade);
+        linha++;
+        mvprintw(linha, 2, "Estado: %s", p.estado);
+        linha++;
+        mvprintw(linha, 2, "Telefone: %s", p.telefone);
+        linha++;
+        mvprintw(linha, 2, "Email: %s", p.email);
+        linha++;
+        mvprintw(linha, 2, "Opcao1: %s", p.opcao1);
+        linha++;
+        mvprintw(linha, 2, "Opcao2: %s", p.opcao2);
+        linha++;
+        attroff(COLOR_PAIR(7));
+
+        attron(COLOR_PAIR(5));
+        mvprintw(linha, 2, "----------------------------------------");
+        attroff(COLOR_PAIR(5));
+
+        linha += 2;
+
+        if (linha > LINES - 5)
+        {
+            mvprintw(linha, 2, "-- Pressione ENTER para continuar --");
+            getch();
+            clear();
+            linha = 2;
+        }
+    }
+
+    fclose(fp);
+    getch();
+}
+
+
+void removercliente()
+{
+    clear();
     char codigo_busca[30];
     FILE *temp;
 
-    printf("Digite o codigo do cliente que deseja: ");
-    scanf("%s", codigo_busca);
+    nc_input(2, 2, "Digite o codigo do cliente:", codigo_busca, 30);
 
     fp = fopen("clientes.csv", "r");
-
-    if(fp == NULL){
-        printf("Erro ao abrir arquivo. \n");
+    if (fp == NULL)
+    {
+        mvprintw(2, 2, "Erro ao abrir arquivo.");
+        getch();
         return;
     }
 
     temp = fopen("temp.csv", "w");
-
-    if(temp == NULL){
-        printf("Erro ao abrir arquivo temporario. \n");
+    if (temp == NULL)
+    {
+        mvprintw(2, 2, "Erro: arquivo temporario.");
+        getch();
         return;
     }
 
-    while (fgets(texto, sizeof(texto), fp)) {
-        texto[strcspn(texto, "\n")] = 0; // Remove o \n
+    int encontrado = 0;
+    while (fgets(texto, sizeof(texto), fp))
+    {
+        sscanf(texto, "%[^;];%[^;];%[^;];%[^;];%[^;];%[^;];%[^;];%[^;];%[^;];%[^\n]",
+               p.codigo, p.cadastro, p.rua, p.setor, p.cidade, p.estado, p.telefone, p.email, p.opcao1, p.opcao2);
 
-        int campos = sscanf(texto, "%[^;];%[^;];%[^;];%[^;];%[^;];%[^;];%[^;];%[^;];%[^;];%[^\n]",
-                        p.codigo, p.cadastro, p.rua, p.setor, p.cidade,
-                        p.estado, p.telefone, p.email, p.opcao1, p.opcao2);
+        if (strcmp(codigo_busca, p.codigo) == 0)
+        {
+            encontrado = 1;
 
-        if (campos == 10) {
-            if (strcmp(codigo_busca, p.codigo) == 0) {
-                printf("Cliente encontrado!\n");
-                printf("Codigo: %s\n", p.codigo);
-                printf("Cadastro: %s\n", p.cadastro);
-                printf("Rua: %s\n", p.rua);
-                printf("Setor: %s\n", p.setor);
-                printf("Cidade: %s\n", p.cidade);
-                printf("Estado: %s\n", p.estado);
-                printf("Telefone: %s\n", p.telefone);
-                printf("Email: %s\n", p.email);
-                printf("Opcao 1: %s\n", p.opcao1);
-                printf("Opcao 2: %s\n", p.opcao2);
-                encontrado = 1;
-                char confirma;
+            attron(COLOR_PAIR(1));
+            mvprintw(5, 2, "Cliente encontrado!");
+            mvprintw(7, 2, "Remover? (S/N)");
+            attroff(COLOR_PAIR(1));
 
-                printf("Deseja realmente remover esse cliente? (S|N) ");
-                scanf(" %c", &confirma);
+            int c = getch();
+            if (c == 'S' || c == 's')
+            {
+                attron(COLOR_PAIR(3));
+                mvprintw(9, 2, "Removido!");
+                attroff(COLOR_PAIR(3));
+            }
+            else
+            {
+                fprintf(temp, "%s", texto);
 
-                if(confirma == 'S' || confirma == 's'){
-                    printf("Cliente removido com sucesso! \n");
-                        
-                    continue; //não escreve no arquivo temporario (remove)
-                } else {
-                    printf("Cliente mantido, remocao cancelada. \n");
-                }
+                attron(COLOR_PAIR(6));
+                mvprintw(9, 2, "Cancelado, mantido.");
+                attroff(COLOR_PAIR(6));
             }
         }
-        fprintf(temp, "%s\n", texto);
+        else
+        {
+            fprintf(temp, "%s", texto);
+        }
     }
 
     fclose(fp);
     fclose(temp);
 
-    if(!encontrado){
-        printf("\nErro: Cliente nao existe. \n");
+    if (!encontrado)
+    {
+        attron(COLOR_PAIR(4));
+        mvprintw(11, 2, "Cliente NAO encontrado.");
+        attroff(COLOR_PAIR(4));
         remove("temp.csv");
-        return;
+    }
+    else
+    {
+        remove("clientes.csv");
+        rename("temp.csv", "clientes.csv");
     }
 
-    // substitui o original pelo temporário
-    remove("clientes.csv");
-    rename("temp.csv", "clientes.csv");
+    getch();
 }
 
-pessoa buscaCliente(const char *codigo_c){
+pessoa buscarCliente(const char *codigo_c){
     FILE *fp_cliente;
     char linha[1000];
 
     fp_cliente=fopen("clientes.csv", "r");
 
-    if(fp == NULL){
-       printf("Erro ao abrir o arquivo.");
+    if(fp_cliente == NULL){
+       mvprintw(2,2,"Erro ao abrir o arquivo.");
+       getch();
+       pessoa vazio = {0};
+        return vazio;
     }
 
     pessoa c_busca;
 
-    while(fgets(linha, sizeof(linha), fp)){
+    while(fgets(linha, sizeof(linha), fp_cliente)){
         linha[strcspn(linha, "\n")] = 0;
 
         int cmp= sscanf(linha, "%[^;]; %[^;]; %[^;]; %[^;]; %[^;]; %[^;]; %[^;]; %[^;]; %[^;]; %[^\n]", 
@@ -443,50 +514,101 @@ pessoa buscaCliente(const char *codigo_c){
          
         if(cmp >= 2 && strcmp(codigo_c, c_busca.codigo)){
             fclose(fp_cliente);
+            return c_busca;
         }
-        else{
-            printf("Cliente não encontrado.");
-        }
-    }
-
-}
-
-void maincliente(){
-    char resp;
-
-    printf("=============MENU CLIENTE==============\n");
-    printf("========QUAL OPCAO VOCE DESEJA?========\n");
-    printf("=======1 PARA CADASTRAR CLIENTE========\n");
-    printf("=======2 PARA CONSULTAR CLIENTE========\n");
-    printf("=======3 PARA REMOVER CLIENTE==========\n");
-    printf("=======4 PARA LISTAR CLIENTE===========\n\n");
-    scanf(" %c", &resp);
-
-    switch(resp){
-        case '1':
-            cadastrarcliente();
-            break;
-
-        case '2': 
-            consultarcliente();
-            break;
-
-        case '3':
-            removercliente();
-            break;
-
-        case '4':
-            listarcliente();
-            break;
-
-        default:
-            printf("Nao existe. \n");
-            break;
     }
 }
 
-int main(){
+//-------------------------------------
+// MENU CLIENTE (ncurses)
+//-------------------------------------
+void maincliente()
+{
+    char *opcoes[] = {
+        "Cadastrar Cliente",
+        "Consultar Cliente",
+        "Remover Cliente",
+        "Listar Clientes",
+        "Sair"};
+
+    int n = 5;
+    int escolha = 0;
+
+    while (1)
+    {
+        clear();
+
+        start_color();
+        use_default_colors();
+        init_pair(1, COLOR_CYAN, -1);
+        init_pair(2, COLOR_YELLOW, -1);
+        init_pair(3, COLOR_GREEN, -1);
+        init_pair(4, COLOR_RED, -1);
+        init_pair(5, COLOR_MAGENTA, -1);
+        init_pair(6, COLOR_BLUE, -1);  
+        init_pair(7, COLOR_WHITE, COLOR_BLACK);
+        init_pair(10, COLOR_WHITE, COLOR_BLACK);
+        
+        bkgd(COLOR_PAIR(10));
+        
+        init_color(COLOR_BLUE, 0, 0, 300);   // 0–1000 (RGB) → azul bem escuro
+        init_pair(10, COLOR_WHITE, COLOR_BLUE);
+        //bkgd(COLOR_PAIR(10));
+
+
+        attron(COLOR_PAIR(1));
+        mvprintw(1, 2, "=========== MENU CLIENTES ===========");
+        mvprintw(3, 2, "Use as setas e ENTER");
+        attroff(COLOR_PAIR(1));
+
+        for (int i = 0; i < n; i++)
+        {
+            if (i == escolha)
+                attron(A_REVERSE | COLOR_PAIR(7));
+            mvprintw(5 + i, 4, "%s", opcoes[i]);
+            attroff(A_REVERSE | COLOR_PAIR(7));
+        }
+
+        int tecla = getch();
+
+        if (tecla == KEY_UP)
+            escolha = (escolha - 1 + n) % n;
+        else if (tecla == KEY_DOWN)
+            escolha = (escolha + 1) % n;
+        else if (tecla == 10)
+        {
+            clear();
+            switch (escolha)
+            {
+            case 0:
+                cadastrarcliente();
+                break;
+            case 1:
+                consultarcliente();
+                break;
+            case 2:
+                removercliente();
+                break;
+            case 3:
+                listarcliente();
+                break;
+            case 4:
+                return;
+            }
+        }
+    }
+}
+
+int main()
+{
+
+    initscr(); // inicia o ncurses
+    cbreak();  // permite capturar teclas sem enter
+    noecho();  // evita eco de teclas ao digitar
+    keypad(stdscr, TRUE);
+
     maincliente();
+
+    endwin(); // encerra ncurses
     return 0;
 }
-
