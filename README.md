@@ -1,6 +1,4 @@
 ﻿# SistemaControlePedidosC
-Aqui está um **README.md completo, organizado, bonito e pronto para colocar no GitHub**, baseado em todas as informações que você me forneceu.
-Se quiser, posso personalizar ainda mais (colocar imagens, badges, instruções de compilação, etc.).
 
 ---
 
@@ -184,5 +182,6 @@ A estrutura `ItemPedido` resolve a relação muitos-para-muitos entre Pedido e P
 * **Rodrigo Ribeiro de Almeida** – Sistemas de Informação – Universidade Estadual de Goiás
 
 ---
+
 
 
