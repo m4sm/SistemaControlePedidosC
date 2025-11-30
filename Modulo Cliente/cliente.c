@@ -161,7 +161,7 @@ int analisacliente(char *cadastro)
 void cadastrarcliente()
 {
     clear();
-    int existe_codigo = 0;
+    existe_codigo = 0;
 
     fp = fopen("clientes.csv", "a+");
     if (fp == NULL)
@@ -178,9 +178,9 @@ void cadastrarcliente()
     //Ver se o código existe
     while (fgets(texto, sizeof(texto), fp))
     {
-        char codigo_existente[30];
-        sscanf(texto, "%[^;];", codigo_existente);
-        if (strcmp(p.codigo, codigo_existente) == 0)
+        char codigo_existe[30];
+        sscanf(texto, "%[^;];", codigo_existe);
+        if (strcmp(p.codigo, codigo_existe) == 0)
         {
             mvprintw(10, 2, "Codigo ja existe!");
             fclose(fp);
