@@ -36,11 +36,11 @@ void listarcliente();
 void maincliente();
 pessoa buscarCliente(const char *codigo_c);
 
-pessoa p; 
-FILE *fp_cliente;
-char texto[1000];
-char codigo_existente[1000];
-int existe_codigo;
+extern pessoa p; 
+extern FILE *fp_cliente;
+extern char texto[1000];
+extern char codigo_existente[1000];
+extern int existe_codigo;
 
 
 #endif

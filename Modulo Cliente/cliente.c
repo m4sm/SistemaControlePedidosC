@@ -3,6 +3,10 @@
 
 FILE *fp;
 char texto[1000];
+pessoa p; 
+FILE *fp_cliente;
+char codigo_existente[1000];
+int existe_codigo;
 
 //-------------------------------------
 // Função auxiliar para entrada ncurses
