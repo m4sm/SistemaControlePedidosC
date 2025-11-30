@@ -4,8 +4,8 @@
 #include <ncurses.h>
 
 #include "pedido.h"
-#include "../Modulo Cliente/cliente.h"
-#include "../Modulo Produto/produtos.h"
+#include "../Cliente/cliente.h"
+#include "../Produto/produtos.h"
 
 
 
@@ -181,7 +181,6 @@ void listarPedido(){
     getch();
     fclose(fp_pedido);
 }
-
 
 void removerPedido(){
     FILE *fp_pedido, *temp_fp; 
