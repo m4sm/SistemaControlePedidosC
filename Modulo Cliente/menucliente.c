@@ -163,8 +163,8 @@ void cadastrarcliente()
     clear();
     int existe_codigo = 0;
 
-    fp = fopen("clientes.csv", "a+");
-    if (fp == NULL)
+    fp_cliente= fopen("clientes.csv", "a+");
+    if (fp_cliente == NULL)
     {
         mvprintw(2, 2, "Erro ao abrir o arquivo.");
         getch();
@@ -301,8 +301,8 @@ void consultarcliente()
     clear();
     char codigo_busca[30];
 
-    fp = fopen("clientes.csv", "r");
-    if (fp == NULL)
+    fp_cliente= fopen("clientes.csv", "r");
+    if (fp_cliente == NULL)
     {
         mvprintw(2, 2, "Erro ao abrir arquivo.");
         getch();
@@ -354,8 +354,8 @@ void listarcliente()
     clear();
     int linha = 2;
 
-    fp = fopen("clientes.csv", "r");
-    if (fp == NULL)
+    fp_cliente = fopen("clientes.csv", "r");
+    if (fp_cliente == NULL)
     {
         mvprintw(2, 2, "Erro ao abrir arquivo.");
         getch();
@@ -418,8 +418,8 @@ void removercliente()
 
     nc_input(2, 2, "Digite o codigo do cliente:", codigo_busca, 30);
 
-    fp = fopen("clientes.csv", "r");
-    if (fp == NULL)
+    fp_cliente = fopen("clientes.csv", "r");
+    if (fp_cliente == NULL)
     {
         mvprintw(2, 2, "Erro ao abrir arquivo.");
         getch();
@@ -496,7 +496,7 @@ pessoa buscarCliente(const char *codigo_c){
 
     fp_cliente=fopen("clientes.csv", "r");
 
-    if(fp == NULL){
+    if(fp_cliente == NULL){
        mvprintw(2,2,"Erro ao abrir o arquivo.");
        getch();
        return;

@@ -13,7 +13,7 @@ void cadastrarProduto(const char *nomeArquivo);
 void consultarProduto(const char *nomeArquivo);
 void removerProduto(const char *nomeArquivo);
 void listarProdutos(const char *nomeArquivo);
-Produto buscarProduto(const char *nomeArquivo, int codigoBuscado);
+Produto buscarProdutos();
 
 // Funções auxiliares de manipulação
 void lerProduto(Produto *p);
