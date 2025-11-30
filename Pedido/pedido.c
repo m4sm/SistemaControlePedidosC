@@ -47,7 +47,7 @@ void cadastrarPedido(){
     rewind(fp_pedido);
 
     while(fgets(texto, 1000, fp_pedido)){
-        sscanf(texto, "%[^,]", codigo_existente);
+        sscanf(texto, "%[^;];", codigo_existente);
 
         if(strcmp(c.numero_pedido, codigo_existente) == 0){
             codigo_cadas = 1;
@@ -79,7 +79,7 @@ void cadastrarPedido(){
     strcpy(c.nome_cliente, c_encontrado.cadastro);
     printw("Cliente encontrado: %s\n", c.nome_cliente);
 
-    printw("Digite o código do produto:\n");
+    printw("Digite o codigo do produto:\n");
     produto_t = ncurses_getint();
 
     p_encontrado = buscarProdutos(produto_t);
@@ -105,7 +105,7 @@ void cadastrarPedido(){
     printw("Custo total: R$ %.2f\n", c.preco_total);
 
     fprintf(fp_pedido,
-        "%s, %s, %s, %d, %s, %.2f, %d, %.2f\n",
+        "%s;%s;%s;%d;%s;%.2f;%d;%.2f\n",
         c.numero_pedido, c.idcliente, c.nome_cliente, c.idproduto,
         c.nome_produto, c.preco_produto, c.quantidade, c.preco_total
     );
@@ -129,7 +129,7 @@ void consultarPedido(){
         return;
     }
 
-    printw("Digite o número do pedido:\n");
+    printw("Digite o numero do pedido:\n");
     ncurses_getstr(numero, 50);
 
     char linha[256];
@@ -141,7 +141,7 @@ void consultarPedido(){
 
         if(strcmp(c.numero_pedido, numero) == 0){
             printw("\nPedido encontrado!\n");
-            printw("Número: %s\n", c.numero_pedido);
+            printw("Numero: %s\n", c.numero_pedido);
             printw("Linha: %s\n", linha);
             encontrado = 1;
             break;
