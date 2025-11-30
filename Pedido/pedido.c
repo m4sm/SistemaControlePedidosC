@@ -182,7 +182,6 @@ void listarPedido(){
     fclose(fp_pedido);
 }
 
-
 void removerPedido(){
     FILE *fp_pedido, *temp_fp; 
     pedido c; 
