@@ -490,6 +490,33 @@ void removercliente()
     getch();
 }
 
+pessoa buscarCliente(const char *codigo_c){
+    FILE *fp_cliente;
+    char linha[1000];
+
+    fp_cliente=fopen("clientes.csv", "r");
+
+    if(fp == NULL){
+       mvprintw(2,2,"Erro ao abrir o arquivo.");
+       getch();
+       return;
+    }
+
+    pessoa c_busca;
+
+    while(fgets(linha, sizeof(linha), fp)){
+        linha[strcspn(linha, "\n")] = 0;
+
+        int cmp= sscanf(linha, "%[^;]; %[^;]; %[^;]; %[^;]; %[^;]; %[^;]; %[^;]; %[^;]; %[^;]; %[^\n]", 
+        c_busca.codigo, c_busca.cadastro, c_busca.rua, c_busca.setor, 
+        c_busca.cidade, c_busca.estado, c_busca.telefone, c_busca.email, c_busca.opcao1, c_busca.opcao2);
+         
+        if(cmp >= 2 && strcmp(codigo_c, c_busca.codigo)){
+            fclose(fp_cliente);
+        }
+    }
+}
+
 //-------------------------------------
 // MENU PRINCIPAL (ncurses)
 //-------------------------------------

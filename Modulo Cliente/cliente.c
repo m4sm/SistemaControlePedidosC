@@ -429,7 +429,7 @@ pessoa buscaCliente(const char *codigo_c){
     fp_cliente=fopen("clientes.csv", "r");
 
     if(fp == NULL){
-        printf("Erro ao abrir o arquivo.");
+       printf("Erro ao abrir o arquivo.");
     }
 
     pessoa c_busca;

@@ -203,7 +203,7 @@ Produto buscarPrdutos(){
    
     Produto p_busca;
 
- while (fgets(linha, sizeof(linha), fp_produto)) {
+    while (fgets(linha, sizeof(linha), fp_produto)) {
         
         linha[strcspn(linha, "\n")] = 0; 
 
