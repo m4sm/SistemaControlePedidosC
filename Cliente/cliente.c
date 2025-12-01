@@ -557,7 +557,7 @@ pessoa buscarCliente(const char *codigo_c){
         c_busca.codigo, c_busca.cadastro, c_busca.rua, c_busca.setor, 
         c_busca.cidade, c_busca.estado, c_busca.telefone, c_busca.email, c_busca.opcao1, c_busca.opcao2);
          
-        if(cmp >= 2 && strcmp(codigo_c, c_busca.codigo)){
+        if(cmp >= 2 && strcmp(codigo_c, c_busca.codigo) == 0){
             fclose(fp_cliente);
             return c_busca;
         }
