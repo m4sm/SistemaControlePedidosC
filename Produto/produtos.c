@@ -1,4 +1,7 @@
 #include <ncurses.h>
+#include <ctype.h> 
+#include <string.h>
+#include <stdlib.h>
 #include "produtos.h"
 
 // Função "Deseja Continuar?"
@@ -28,7 +31,7 @@ void lerProduto(Produto *p) {
 
     printw("Digite a descricao: ");
     refresh();
-    getnstr(p->descricao, 99); // Aumentei um pouco o buffer de leitura segura
+    getnstr(p->descricao, 99); 
 
     printw("Digite a quantidade: ");
     refresh();
@@ -50,11 +53,12 @@ void cadastrarProduto(const char *nomeArquivo){
     FILE *arq = fopen(nomeArquivo, "a");
     if (arq == NULL) {
         printw("Erro ao abrir o arquivo %s!\n", nomeArquivo);
+        getch();
         return;
     }
     
-    // Formato CSV simples
-    fprintf(arq, "%d,%s,%d,%.2f\n", p.codigo, p.descricao, p.quantidade, p.preco);
+    
+    fprintf(arq, "%d;%s;%d;%.2f\n", p.codigo, p.descricao, p.quantidade, p.preco);
     fclose(arq);
 
     printw("\nProduto cadastrado com sucesso!\n");
@@ -64,6 +68,7 @@ void consultarProduto(const char *nomeArquivo) {
     FILE *fp = fopen(nomeArquivo, "r");
     if (fp == NULL) {
         printw("Erro ao abrir o arquivo.\n");
+        getch();
         return;
     }
 
@@ -72,22 +77,27 @@ void consultarProduto(const char *nomeArquivo) {
     
     printw("Digite o codigo do produto a consultar: ");
     refresh();
-    getnstr(entrada, 49); // Usar getnstr é mais seguro que scanw em ncurses
+    getnstr(entrada, 49);
     codigoBusca = atoi(entrada);
     
     Produto p;
     int encontrado = 0;
+    char linha[256];
 
-    // Lê linha por linha do CSV
-    while (fscanf(fp, "%d,%99[^,],%d,%f\n", &p.codigo, p.descricao, &p.quantidade, &p.preco) == 4) {
-        if (p.codigo == codigoBusca) {
-            printw("\n=== Produto Encontrado ===\n");
-            printw("Codigo: %d\n", p.codigo);
-            printw("Descricao: %s\n", p.descricao);
-            printw("Quantidade: %d\n", p.quantidade);
-            printw("Preco: %.2f\n", p.preco);
-            encontrado = 1;
-            break;
+    //Leitura linha a linha com fgets e sscanf com (;)
+    while (fgets(linha, sizeof(linha), fp)) {
+        linha[strcspn(linha, "\n")] = 0; // Remove quebra de linha
+
+        if (sscanf(linha, "%d;%[^;];%d;%f", &p.codigo, p.descricao, &p.quantidade, &p.preco) == 4) {
+            if (p.codigo == codigoBusca) {
+                printw("\n=== Produto Encontrado ===\n");
+                printw("Codigo: %d\n", p.codigo);
+                printw("Descricao: %s\n", p.descricao);
+                printw("Quantidade: %d\n", p.quantidade);
+                printw("Preco: %.2f\n", p.preco);
+                encontrado = 1;
+                break;
+            }
         }
     }
 
@@ -122,13 +132,20 @@ void removerProduto(const char *nomeArquivo) {
     
     Produto p;
     int encontrado = 0;
+    char linha[256];
 
-    while (fscanf(fp, "%d,%99[^,],%d,%f\n", &p.codigo, p.descricao, &p.quantidade, &p.preco) == 4) {
-        if (p.codigo == codigoRemover) {
-            encontrado = 1;
-            continue; 
+    while (fgets(linha, sizeof(linha), fp)) {
+        linha[strcspn(linha, "\n")] = 0;
+
+        // Lê os dados para verificar o código
+        if (sscanf(linha, "%d;%[^;];%d;%f", &p.codigo, p.descricao, &p.quantidade, &p.preco) == 4) {
+            if (p.codigo == codigoRemover) {
+                encontrado = 1;
+                continue; 
+            }
+            // escreve no temporário 
+            fprintf(temp, "%d;%s;%d;%.2f\n", p.codigo, p.descricao, p.quantidade, p.preco);
         }
-        fprintf(temp, "%d,%s,%d,%.2f\n", p.codigo, p.descricao, p.quantidade, p.preco);
     }
 
     fclose(fp);
@@ -150,22 +167,27 @@ void listarProdutos(const char *nomeArquivo) {
     FILE *fp = fopen(nomeArquivo, "r");
     if (fp == NULL) {
         printw("Nenhum produto cadastrado ou erro ao abrir o arquivo.\n");
+        getch();
         return;
     }
 
     Produto p;
     int count = 0;
+    char linha[256];
 
-    clear(); // Limpa a tela para a listagem
+    clear(); 
     printw("=== Lista de Produtos ===\n");
 
-    while (fscanf(fp, "%d,%99[^,],%d,%f\n", &p.codigo, p.descricao, &p.quantidade, &p.preco) == 4) {
-        printw("\nProduto %d:\n", ++count);
-        printw("  Codigo     : %d\n", p.codigo);
-        printw("  Descricao  : %s\n", p.descricao);
-        printw("  Quantidade : %d\n", p.quantidade);
-        printw("  Preco      : R$ %.2f\n", p.preco);
+    while (fgets(linha, sizeof(linha), fp)) {
+        linha[strcspn(linha, "\n")] = 0;
         
+        if (sscanf(linha, "%d;%[^;];%d;%f", &p.codigo, p.descricao, &p.quantidade, &p.preco) == 4) {
+            printw("\nProduto %d:\n", ++count);
+            printw("  Codigo     : %d\n", p.codigo);
+            printw("  Descricao  : %s\n", p.descricao);
+            printw("  Quantidade : %d\n", p.quantidade);
+            printw("  Preco      : R$ %.2f\n", p.preco);
+        }
     }
 
     if (count == 0) {
@@ -177,37 +199,45 @@ void listarProdutos(const char *nomeArquivo) {
     getch();
 }
 
-Produto buscarProdutos(){
-    int codigo_p;
+// função de busca do pedido.c
+Produto buscarProdutos(int codigo_alvo){
     FILE *fp_produto;
     char linha[256];    
     
+    // Inicializa produto "Vazio/Erro"
+    Produto p_busca;
+    p_busca.codigo = -1; 
+    
+    // Certifique-se que o nome do arquivo aqui é o mesmo usado nas outras funções
+    // Nas outras funções você passa "listadeprodutos.csv" por parâmetro
     fp_produto = fopen("listadeprodutos.csv", "r");
 
     if(fp_produto == NULL){
-        printw("Erro ao abrir o arquivo");
-        getch();
-        Produto vazio = {0};
-        return vazio;
+        
+        return p_busca;
     }
 
-    Produto p_busca;
-
     while (fgets(linha, sizeof(linha), fp_produto)) {
-        
         linha[strcspn(linha, "\n")] = 0; 
 
-        
-        int campos_lidos = sscanf(linha, "%d, %[^,], %d, %f", 
+        // Lê usando ponto e vírgula
+        int campos_lidos = sscanf(linha, "%d;%[^;];%d;%f", 
                                   &p_busca.codigo, 
                                   p_busca.descricao, 
                                   &p_busca.quantidade, 
                                   &p_busca.preco); 
+        
         if (campos_lidos == 4) {
-            if (p_busca.codigo == codigo_p) {
+            if (p_busca.codigo == codigo_alvo) {
                 fclose(fp_produto);
-                return p_busca; 
+                return p_busca; // Retorna o produto encontrado
             }
         }
     }
+    
+    fclose(fp_produto);
+    
+    // Se saiu do loop, não encontrou. Retorna com codigo -1.
+    p_busca.codigo = -1;
+    return p_busca;
 }
