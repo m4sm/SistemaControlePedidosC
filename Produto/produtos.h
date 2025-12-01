@@ -17,7 +17,7 @@ void cadastrarProduto(const char *nomeArquivo);
 void consultarProduto(const char *nomeArquivo);
 void removerProduto(const char *nomeArquivo);
 void listarProdutos(const char *nomeArquivo);
-Produto buscarProdutos();
+Produto buscarProdutos(int codigo_alvo);
 
 // Funções auxiliares de manipulação
 void lerProduto(Produto *p);
