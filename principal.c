@@ -14,16 +14,24 @@ void menuPrincipal() {
     int num_opcoes = 4;
     int selecionado = 0;
     int tecla;
+    init_pair(1, COLOR_WHITE, COLOR_BLUE);   
+    init_pair(2, COLOR_YELLOW, -1);
 
     while (1) {
         clear();
         printw("======== SISTEMA PRINCIPAL ========\n\n");
 
         for (int i = 0; i < num_opcoes; i++) {
-            if (i == selecionado)
-                printw(" -> %s\n", opcoes[i]);   // destacado
-            else
+            if (i == selecionado){
+                attron(COLOR_PAIR(1));
+                printw(" -> %s\n", opcoes[i]); 
+                attroff(COLOR_PAIR(1));
+            } 
+            else{
+                attron(COLOR_PAIR(2));
                 printw("    %s\n", opcoes[i]);
+                attroff(COLOR_PAIR(2));
+            }
         }
 
         tecla = getch();
@@ -62,8 +70,12 @@ void menuPrincipal() {
     }
 }
 
+
+
 int main() {
     initscr();
+    start_color();
+    use_default_colors();
     noecho();
     cbreak();
     keypad(stdscr, TRUE);
