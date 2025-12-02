@@ -1,7 +1,3 @@
-﻿# SistemaControlePedidosC
-
----
-
 # 🗂️ Sistema de Controle de Pedidos (SCP)
 
 Projeto desenvolvido em linguagem **C**, utilizando a biblioteca **ncurses**, para gerenciamento de **Clientes**, **Produtos** e **Pedidos**, com persistência de dados em arquivos `.csv`.
@@ -182,6 +178,7 @@ A estrutura `ItemPedido` resolve a relação muitos-para-muitos entre Pedido e P
 * **Rodrigo Ribeiro de Almeida** – Sistemas de Informação – Universidade Estadual de Goiás
 
 ---
+
 
 
 
