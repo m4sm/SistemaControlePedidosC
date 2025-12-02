@@ -16,10 +16,13 @@ void menuPrincipal() {
     int tecla;
     init_pair(1, COLOR_WHITE, COLOR_BLUE);   
     init_pair(2, COLOR_YELLOW, -1);
+    init_pair(6, COLOR_BLUE, -1);
 
     while (1) {
         clear();
+        attron(COLOR_PAIR(6));
         printw("======== SISTEMA PRINCIPAL ========\n\n");
+        attroff(COLOR_PAIR(6));
 
         for (int i = 0; i < num_opcoes; i++) {
             if (i == selecionado){

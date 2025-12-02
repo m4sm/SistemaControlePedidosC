@@ -1,12 +1,7 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
 #include <ncurses.h>
-
 #include "pedido.h"
 #include "../Cliente/cliente.h"
 #include "../Produto/produtos.h"
-
 
 
 void ncurses_getstr(char *buffer, int size) {
@@ -69,7 +64,7 @@ void cadastrarPedido(){
 
     c_encontrado = buscarCliente(cliente_t);
     if(strcmp(c_encontrado.codigo, "") == 0){
-        printw("Código de cliente não encontrado!\n");
+        printw("Codigo de cliente não encontrado!\n");
         getch();
         fclose(fp_pedido);
         return;
