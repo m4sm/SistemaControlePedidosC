@@ -567,7 +567,7 @@ pessoa buscarCliente(const char *codigo_c){
 //-------------------------------------
 // MENU CLIENTE (ncurses)
 //-------------------------------------
-void maincliente()
+void menuCliente()
 {
     char *opcoes[] = {
         "Cadastrar Cliente",
@@ -644,16 +644,3 @@ void maincliente()
     }
 }
 
-int main()
-{
-
-    initscr(); // inicia o ncurses
-    cbreak();  // permite capturar teclas sem enter
-    noecho();  // evita eco de teclas ao digitar
-    keypad(stdscr, TRUE);
-
-    maincliente();
-
-    endwin(); // encerra ncurses
-    return 0;
-}

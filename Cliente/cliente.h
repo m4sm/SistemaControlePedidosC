@@ -33,7 +33,7 @@ int analisacliente(char *cadastro);
 void consultarcliente();
 void removercliente();
 void listarcliente();
-void maincliente();
+void menuCliente();
 pessoa buscarCliente(const char *codigo_c);
 
 extern pessoa p; 

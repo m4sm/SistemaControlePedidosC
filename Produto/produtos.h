@@ -22,5 +22,6 @@ Produto buscarProdutos(int codigo_alvo);
 // Funções auxiliares de manipulação
 void lerProduto(Produto *p);
 int desejaContinuar(); 
+void menuProdutos();
 
 #endif
