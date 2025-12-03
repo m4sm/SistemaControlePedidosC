@@ -206,8 +206,8 @@ Produto buscarProdutos(int codigo_alvo){
     p_busca.codigo = -1; 
     
     // Certifique-se que o nome do arquivo aqui é o mesmo usado nas outras funções
-    // Nas outras funções você passa "listadeprodutos.csv" por parâmetro
-    fp_produto = fopen("listadeprodutos.csv", "r");
+    // Nas outras funções você passa "produtos.csv" por parâmetro
+    fp_produto = fopen("produtos.csv", "r");
 
     if(fp_produto == NULL){
         
@@ -239,55 +239,83 @@ Produto buscarProdutos(int codigo_alvo){
     return p_busca;
 }
 
-void menuProdutos() { 
-// Inicia o ncurses
-    initscr();
-    cbreak();
-    noecho();
-    keypad(stdscr, TRUE);
 
-    int opcao;
 
-    do {
+// MENU CLIENTE (ncurses)
+//-------------------------------------
+void menuProdutos()
+{
+    char *opcoes[] = {
+        "Cadastrar Produto",
+        "Consultar Produto",
+        "Remover Produto",
+        "Listar Produto",
+        "Sair"};
+
+    int n = 5;
+    int escolha = 0;
+
+    while (1)
+    {
         clear();
-        printw("=== Sistema de Produtos ===\n");
-        printw("1. Cadastrar Produto\n");
-        printw("2. Consultar Produto\n");
-        printw("3. Remover Produto\n");
-        printw("4. Listar Produtos\n");
-        printw("0. Sair\n");
-        printw("Escolha uma opcao: ");
-        refresh();
+
+        start_color();
+        use_default_colors();
+        init_pair(1, COLOR_CYAN, -1);
+        init_pair(2, COLOR_YELLOW, -1);
+        init_pair(3, COLOR_GREEN, -1);
+        init_pair(4, COLOR_RED, -1);
+        init_pair(5, COLOR_MAGENTA, -1);
+        init_pair(6, COLOR_BLUE, -1);  
+        init_pair(7, COLOR_WHITE, COLOR_BLACK);
+        init_pair(10, COLOR_WHITE, COLOR_BLACK);
         
-        scanw("%d", &opcao);
+        bkgd(COLOR_PAIR(10));
         
-        // switch-case
-        switch (opcao) {
-            case 1: 
-                do {
-                    clear();
-                    cadastrarProduto("listadeprodutos.csv");
-                } while (desejaContinuar());
-                break;
-                
-            case 2: 
-                consultarProduto("listadeprodutos.csv"); 
-                break;
-            case 3: 
-                removerProduto("listadeprodutos.csv"); 
-                break;
-            case 4: 
-                listarProdutos("listadeprodutos.csv"); 
-                break;
-            case 0: 
-                printw("Saindo...\n"); 
-                break;
-            default: 
-                printw("Opcao invalida!\n");
-                getch();
+        init_color(COLOR_BLUE, 0, 0, 300);   // 0–1000 (RGB) → azul bem escuro
+        init_pair(10, COLOR_WHITE, COLOR_BLUE);
+        //bkgd(COLOR_PAIR(10));
+
+
+        attron(COLOR_PAIR(1));
+        mvprintw(1, 2, "=========== MENU PRODUTOS ===========");
+        mvprintw(3, 2, "Use as setas e ENTER");
+        attroff(COLOR_PAIR(1));
+
+        for (int i = 0; i < n; i++)
+        {
+            if (i == escolha)
+                attron(A_REVERSE | COLOR_PAIR(7));
+            mvprintw(5 + i, 4, "%s", opcoes[i]);
+            attroff(A_REVERSE | COLOR_PAIR(7));
         }
-    } while (opcao != 0);
 
-    endwin(); // Encerra ncurse
+        int tecla = getch();
+
+        if (tecla == KEY_UP)
+            escolha = (escolha - 1 + n) % n;
+        else if (tecla == KEY_DOWN)
+            escolha = (escolha + 1) % n;
+        else if (tecla == 10)
+        {
+            clear();
+            switch (escolha)
+            {
+            case 0:
+                cadastrarProduto("produtos.csv");
+                break;
+            case 1:
+                consultarProduto("produtos.csv");
+                break;
+            case 2:
+                removerProduto("produtos.csv");
+                break;
+            case 3:
+                listarProdutos("produtos.csv");
+                break;
+            case 4:
+                return;
+            }
+        }
+    }
 }
-
