@@ -346,7 +346,7 @@ void menuPedido(){
         clear();
         bkgd(COLOR_PAIR(4)); 
 
-        printw("============= MENU =============\n\n");
+        printw("============= MENU PEDIDO =============\n\n");
 
         for(int i = 0; i < total; i++){
             if(i + 1 == opcao){
