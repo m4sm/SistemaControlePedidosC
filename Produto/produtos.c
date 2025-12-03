@@ -21,6 +21,8 @@ int desejaContinuar() {
 void lerProduto(Produto *p) {
     char entrada[100];
 
+    echo(); //ativa a visibilidade das letras digitadas no terminal
+
     printw("Digite o codigo: ");
     refresh();
     getnstr(entrada, 99);
@@ -40,6 +42,7 @@ void lerProduto(Produto *p) {
     getnstr(entrada, 99);
     p->preco = atof(entrada);
 
+    noecho(); //desativa
     printw("\n");
 }
 
@@ -74,7 +77,9 @@ void consultarProduto(const char *nomeArquivo) {
     
     printw("Digite o codigo do produto a consultar: ");
     refresh();
+    echo(); //ativa
     getnstr(entrada, 49);
+    noecho(); //desativa
     codigoBusca = atoi(entrada);
     
     Produto p;
@@ -124,7 +129,9 @@ void removerProduto(const char *nomeArquivo) {
     char entrada[50];
     printw("Digite o codigo do produto a remover: ");
     refresh();
+    echo(); //ativa
     getnstr(entrada, 49);
+    noecho(); //desativa
     codigoRemover = atoi(entrada);
     
     Produto p;
