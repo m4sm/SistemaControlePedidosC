@@ -16,8 +16,6 @@ int ncurses_getint() {
     return atoi(temp);
 }
 
-
-
 void cadastrarPedido(){
     FILE *fp_pedido;
     pedido c;
@@ -132,12 +130,29 @@ void consultarPedido(){
     fgets(linha, sizeof(linha), fp_pedido);
 
     while(fgets(linha, sizeof(linha), fp_pedido)){
-        sscanf(linha, " %[^;];", c.numero_pedido);
+        sscanf(
+            linha,
+            " %[^;];%[^;];%[^;];%d;%[^;];%f;%d;%f",
+            c.numero_pedido,
+            c.idcliente,
+            c.nome_cliente,
+            &c.idproduto,
+            c.nome_produto,
+            &c.preco_produto,
+            &c.quantidade,
+            &c.preco_total
+        );
 
-        if(strcmp(c.numero_pedido, numero) == 0){
-            printw("\nPedido encontrado!\n");
+    if(strcmp(c.numero_pedido, numero) == 0){
+            printw("\nLista de Pedidos!\n");
             printw("Numero: %s\n", c.numero_pedido);
-            printw("Linha: %s\n", linha);
+            printw("ID cliente: %s\n", c.idcliente);
+            printw("Cadastro do Cliente: %s\n", c.nome_cliente);
+            printw("ID  produto: %d\n", c.idproduto);
+            printw("Nome do Produto: %s\n", c.nome_produto);
+            printw("Preço: %.2f\n", c.preco_produto);
+            printw("Quantidade: %d\n", c.quantidade);
+            printw("Preço Total: %.2f\n\n", c.preco_total);
             encontrado = 1;
             break;
         }
@@ -166,11 +181,29 @@ void listarPedido(){
     char linha[256];
 
     fgets(linha, sizeof(linha), fp_pedido);
-    printw("%s", linha);
     
     while(fgets(linha, sizeof(linha), fp_pedido)){
-        sscanf(linha, " %[^;];", c.numero_pedido);
-        printw("Número: %s\n", c.numero_pedido);
+        sscanf(
+            linha,
+            " %[^;];%[^;];%[^;];%d;%[^;];%f;%d;%f",
+            c.numero_pedido,
+            c.idcliente,
+            c.nome_cliente,
+            &c.idproduto,
+            c.nome_produto,
+            &c.preco_produto,
+            &c.quantidade,
+            &c.preco_total
+        );
+            printw("\nLista de Pedidos!\n");
+            printw("\nNumero: %s\n", c.numero_pedido);
+            printw("\nID cliente: %s\n", c.idcliente);
+            printw("\nCadastro do Cliente: %s\n", c.nome_cliente);
+            printw("\nID  produto: %d\n", c.idproduto);
+            printw("\nNome do Produto: %s\n", c.nome_produto);
+            printw("\nPreço: %.2f\n", c.preco_produto);
+            printw("\nQuantidade: %d\n", c.quantidade);
+            printw("\nPreço Total: %.2f\n\n", c.preco_total);
     }
 
     getch();
