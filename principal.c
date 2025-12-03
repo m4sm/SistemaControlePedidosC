@@ -17,6 +17,8 @@ void menuPrincipal() {
     init_pair(1, COLOR_WHITE, COLOR_BLUE);   
     init_pair(2, COLOR_YELLOW, -1);
     init_pair(6, COLOR_BLUE, -1);
+    init_pair(5, COLOR_MAGENTA, -1);
+
 
     while (1) {
         clear();
@@ -26,7 +28,7 @@ void menuPrincipal() {
 
         for (int i = 0; i < num_opcoes; i++) {
             if (i == selecionado){
-                attron(COLOR_PAIR(1));
+                attron(COLOR_PAIR(3));
                 printw(" -> %s\n", opcoes[i]); 
                 attroff(COLOR_PAIR(1));
             } 
