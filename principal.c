@@ -18,13 +18,14 @@ void menuPrincipal() {
     init_pair(2, COLOR_YELLOW, -1);
     init_pair(6, COLOR_BLUE, -1);
     init_pair(5, COLOR_MAGENTA, -1);
+    init_pair(3, COLOR_GREEN, -1);
 
 
     while (1) {
         clear();
-        attron(COLOR_PAIR(6));
-        printw("======== SISTEMA PRINCIPAL ========\n\n");
-        attroff(COLOR_PAIR(6));
+        attron(COLOR_PAIR(3));
+        printw("======== SISTEMA DE CONTROLE DE PEDIDOS ========\n\n");
+        attroff(COLOR_PAIR(3));
 
         for (int i = 0; i < num_opcoes; i++) {
             if (i == selecionado){

@@ -143,7 +143,7 @@ A relação entre Pedido e Produto é tratada por meio da struct **ItemPedido**,
 
 ---
 
-## ⚙️ Como compilar:
+## ⚙️ Como compilar e executar:
 
 * gcc principal.c Cliente/cliente.c Produto/produtos.c Pedido/pedido.c -o sistema -lncurses  
 * ./sistema
