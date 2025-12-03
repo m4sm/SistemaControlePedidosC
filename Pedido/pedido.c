@@ -1,6 +1,4 @@
 #include <ncurses.h>
-#include <string.h>
-#include <stdlib.h>
 #include "pedido.h"
 #include "../Cliente/cliente.h"
 #include "../Produto/produtos.h"
@@ -16,6 +14,28 @@ int ncurses_getint() {
     char temp[20];
     ncurses_getstr(temp, 20);
     return atoi(temp);
+}
+
+int analisarPedido(char *codigo){
+    FILE *fp = fopen("pedido.csv", "r");
+    char linha[300], numero_lido[50];
+
+    if(fp == NULL)
+        return 0;
+
+    fgets(linha, sizeof(linha), fp);
+
+    while(fgets(linha, sizeof(linha), fp)){
+        sscanf(linha, "%[^;];", numero_lido);
+
+        if(strcmp(codigo, numero_lido) == 0){
+            fclose(fp);
+            return 1; // encontrado
+        }
+    }
+
+    fclose(fp);
+    return 0; 
 }
 
 void cadastrarPedido(){
@@ -46,18 +66,7 @@ void cadastrarPedido(){
     attroff(COLOR_PAIR(1));
     ncurses_getstr(c.numero_pedido, 50);
 
-    rewind(fp_pedido);
-
-    while(fgets(texto, 1000, fp_pedido)){
-        sscanf(texto, "%[^;];", codigo_existente);
-
-        if(strcmp(c.numero_pedido, codigo_existente) == 0){
-            codigo_cadas = 1;
-            break;
-        }
-    }
-
-    if(codigo_cadas) {
+    if(analisarPedido(c.numero_pedido)){
         attron(COLOR_PAIR(3));
         printw("Este Identificador já existe!\n");
         attroff(COLOR_PAIR(3));
@@ -69,6 +78,7 @@ void cadastrarPedido(){
         printw("Identificador cadastrado!\n");
         attroff(COLOR_PAIR(3));
     }
+
 
     attron(COLOR_PAIR(1));
     printw("Digite o código do cliente:\n");

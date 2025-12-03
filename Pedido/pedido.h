@@ -17,7 +17,7 @@ typedef struct {
 
 } pedido;
 
-void analisarPedido();
+int analisarPedido();
 void cadastrarPedido();
 void consultarPedido();
 void listarPedido();

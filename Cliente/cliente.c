@@ -562,6 +562,10 @@ pessoa buscarCliente(const char *codigo_c){
             return c_busca;
         }
     }
+
+    fclose(fp_cliente);
+    pessoa vazio = {0};      
+    return vazio;
 }
 
 //-------------------------------------
