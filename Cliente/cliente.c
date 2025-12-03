@@ -8,9 +8,8 @@ FILE *fp_cliente;
 char codigo_existente[1000];
 int existe_codigo;
 
-//-------------------------------------
+
 // Função auxiliar para entrada ncurses
-//-------------------------------------
 void nc_input(int y, int x, const char *msg, char *buf, int size)
 {
     attron(COLOR_PAIR(2));
@@ -568,9 +567,7 @@ pessoa buscarCliente(const char *codigo_c){
     return vazio;
 }
 
-//-------------------------------------
-// MENU CLIENTE (ncurses)
-//-------------------------------------
+
 void menuCliente()
 {
     char *opcoes[] = {
