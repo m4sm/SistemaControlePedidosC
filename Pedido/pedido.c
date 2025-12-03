@@ -181,7 +181,7 @@ void listarPedido(){
     char linha[256];
 
     fgets(linha, sizeof(linha), fp_pedido);
-    
+    printw("\nLista de Pedidos!\n");
     while(fgets(linha, sizeof(linha), fp_pedido)){
         sscanf(
             linha,
@@ -195,15 +195,15 @@ void listarPedido(){
             &c.quantidade,
             &c.preco_total
         );
-            printw("\nLista de Pedidos!\n");
             printw("\nNumero: %s\n", c.numero_pedido);
-            printw("\nID cliente: %s\n", c.idcliente);
-            printw("\nCadastro do Cliente: %s\n", c.nome_cliente);
-            printw("\nID  produto: %d\n", c.idproduto);
-            printw("\nNome do Produto: %s\n", c.nome_produto);
-            printw("\nPreço: %.2f\n", c.preco_produto);
-            printw("\nQuantidade: %d\n", c.quantidade);
-            printw("\nPreço Total: %.2f\n\n", c.preco_total);
+            printw("ID cliente: %s\n", c.idcliente);
+            printw("Cadastro do Cliente: %s\n", c.nome_cliente);
+            printw("ID  produto: %d\n", c.idproduto);
+            printw("Nome do Produto: %s\n", c.nome_produto);
+            printw("Preço: %.2f\n", c.preco_produto);
+            printw("Quantidade: %d\n", c.quantidade);
+            printw("Preço Total: %.2f\n", c.preco_total);
+            printw("------------------------------------\n\n");
     }
 
     getch();
