@@ -20,7 +20,6 @@ void menuPrincipal() {
     init_pair(5, COLOR_MAGENTA, -1);
     init_pair(3, COLOR_GREEN, -1);
 
-
     while (1) {
         clear();
         attron(COLOR_PAIR(3));
